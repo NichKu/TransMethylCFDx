@@ -3,7 +3,7 @@ rule align:
         reads_1_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R1_val_1.fq.gz",
         reads_2_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R2_val_2.fq.gz"
     output:
-        bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS.bam"
+        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam"
     log:
         align_log = config['resultsdir'] + "/logs/4_alignment/{sample}.bwameth.log",
         samb_log = config['resultsdir'] + "/logs/4_alignment/{sample}.toBam_sambamba.log"
@@ -25,18 +25,18 @@ rule align:
             --sam-input \
             -f bam \
             -l 1 \
-            -o {output.bam_wCEREBIS} \
+            -o {output.bam_w_ctrls} \
             /dev/stdin \
         2> {log.samb_log}
         """
 
-rule sort_bam_wCEREBIS:
+rule sort_bam_w_ctrls:
     input:
-        bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS.bam"
+        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam"
     output:
-        bam_wCEREBIS_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam"
+        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam"
     log:
-        sort_unfilt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_wCEREBIS_sambamba.log"
+        sort_unfilt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_w_ctrls_sambamba.log"
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
@@ -47,19 +47,19 @@ rule sort_bam_wCEREBIS:
         sambamba sort \
             -t {threads} \
             --tmpdir {params.temp_dir} \
-            -o {output.bam_wCEREBIS_sort} \
+            -o {output.bam_w_ctrls_sort} \
             -l 1 \
-            {input.bam_wCEREBIS} \
+            {input.bam_w_ctrls} \
         2> {log.sort_unfilt_log}
         """
 
-rule index_bam_wCEREBIS:
+rule index_bam_w_ctrls:
     input:
-        bam_wCEREBIS_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam"
+        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam"
     output:
-        bam_wCEREBIS_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
+        bam_w_ctrls_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     log:
-        log_index = config['resultsdir'] + "/logs/4_alignment/{sample}.index_bam_wCEREBIS.log"
+        log_index = config['resultsdir'] + "/logs/4_alignment/{sample}.index_bam_w_ctrls.log"
     conda:
         "../envs/twist_target.yaml"
     threads: index_threads
@@ -67,15 +67,15 @@ rule index_bam_wCEREBIS:
         """
         samtools index \
             -@ {threads} \
-            -o {output.bam_wCEREBIS_sort_bai} \
-            {input.bam_wCEREBIS_sort} \
+            -o {output.bam_w_ctrls_sort_bai} \
+            {input.bam_w_ctrls_sort} \
         2> {log.log_index}
         """
 
 rule remove_CEREBIS:
     input:
-        bam_wCEREBIS_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam",
-        bam_wCEREBIS_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
+        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
+        bam_w_ctrls_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     output:
         bam = config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
     log:
@@ -88,7 +88,7 @@ rule remove_CEREBIS:
             -b \
             -h \
             -o {output.bam} \
-            {input.bam_wCEREBIS_sort} \
+            {input.bam_w_ctrls_sort} \
             chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY \
         2> {log.log_remove}
         """

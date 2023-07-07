@@ -4,8 +4,8 @@ extract the controls lambda and pUC19
 
 rule extract_lambda_bam:
     input:
-        bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam",
-        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
+        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
+        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     output:
         bam_lambda = config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda.bam"
     log:
@@ -13,13 +13,13 @@ rule extract_lambda_bam:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_lambda} {input.bam_wCEREBIS} "J02459.1"
+        samtools view -b -h -o {output.bam_lambda} {input.bam_w_ctrls} "J02459.1"
         """
 
 rule extract_pUC19_bam:
     input:
-        bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam",
-        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
+        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
+        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     output:
         bam_pUC19 = config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19.bam"
     log:
@@ -27,7 +27,7 @@ rule extract_pUC19_bam:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_pUC19} {input.bam_wCEREBIS} "M77789.2"
+        samtools view -b -h -o {output.bam_pUC19} {input.bam_w_ctrls} "M77789.2"
         """
 
 """

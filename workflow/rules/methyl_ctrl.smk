@@ -4,8 +4,8 @@ extract the controls CEREBIS
 
 rule extract_cerebis_bam:
     input:
-        bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam",
-        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
+        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
+        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     output:
         bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.bam"
     log:
@@ -13,7 +13,7 @@ rule extract_cerebis_bam:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_CEREBIS} {input.bam_wCEREBIS} CEREBIS
+        samtools view -b -h -o {output.bam_CEREBIS} {input.bam_w_ctrls} CEREBIS
         """
 
 """
