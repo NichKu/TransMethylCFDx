@@ -5,8 +5,8 @@
 * [Overview](#overview)
 * [Introduction](#introduction)
 * [Pipeline Summary](#pipeline-summary)
-* [Download and Setup](#download-and-setup)
-    - [Requirements](#requirements)
+* [Requirements](#requirements)
+* [Download](#download)
 * [Usage](#usage)
 * [Output Folder Structure](#output-folder-structure)
 
@@ -25,34 +25,38 @@
 7. Pileup and dd-cfDNA calculation ([`samtools`](https://www.htslib.org))
 8. Report Generation ([`MultiQC`](https://multiqc.info))
 
-## **Download and Setup**
 
-First the Github Repo needs to be cloned.
-
-```
-git clone https://github.com/NichKu/TMethPi.git
-```
-
-## Requirements
+## **Requirements**
 
 The these following dependencies need to be available:
-- Conda
-- Snakemake > 7.17
+- Conda >= 4.10
+- Snakemake >= 7.17
 
 > **Note**
 > For the pipeline to run, a conda environment will be created with all necessary dependencies and will be done automatically.
 These above requirements are only needed to launch the pipeline.
 
+## **Download**
+
+After ensuring the dependencies are available, the Github Repo needs to be cloned.
+
+```
+git clone https://github.com/NichKu/TMethPi.git
+cd TMethPi/workflow
+```
 
 ## **Usage**
 
+To launch the analysis run the following command:
+
 ```
-snakemake -c [threads] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
+snakemake --cores [n] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
 ```
-For detailed explanation of the Snakemake argument please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#). It also goes into detail when the pipeline should be run a an HPC cluster.
+
+For detailed explanation of the Snakemake arguments please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#). This guide also goes into details when the pipeline should be run a an HPC cluster.
 
 > **Note**
-> To test whether the pipeline would run the argument --dry-run can be added preventing from acutally running the pipeline.
+> To test whether the pipeline would run, the argument --dry-run can be added preventing from acutally running the pipeline.
 
 
 add keyword: snakemake and workflow --> https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html

@@ -9,11 +9,12 @@ rule extract_lambda_bam:
     output:
         bam_lambda = config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda.bam"
     log:
+        extract_lambda_log = config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}_ExtractLambdaReads.log"
     conda:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_lambda} {input.bam_w_ctrls} "J02459.1"
+        samtools view -b -h -o {output.bam_lambda} {input.bam_w_ctrls} "J02459.1" 2> {log.extract_lambda_log}
         """
 
 rule extract_pUC19_bam:
@@ -23,11 +24,12 @@ rule extract_pUC19_bam:
     output:
         bam_pUC19 = config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19.bam"
     log:
+        extract_pUC19_log = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}_ExtractpUC19Reads.log"
     conda:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_pUC19} {input.bam_w_ctrls} "M77789.2"
+        samtools view -b -h -o {output.bam_pUC19} {input.bam_w_ctrls} "M77789.2" 2> {log.extract_pUC19_log}
         """
 
 """
