@@ -1,10 +1,7 @@
 # **Targeted Methylation Analysis Pipeline (TaMethPi)**
-****
-
-<br>
 
 ## **Overview**
----
+
 * [Overview](#overview)
 * [Introduction](#introduction)
 * [Pipeline Summary](#pipeline-summary)
@@ -13,16 +10,11 @@
 * [Usage](#usage)
 * [Output Folder Structure](#output-folder-structure)
 
-<br>
-
 ## **Introduction**
----------------
+
 **TMethPi** is a pipeline for the analysis of targeted methylation sequencing data specifically designed to pre-process data for the deconvolution of cell-free DNA to determine the tissue of origin (TOO) but also perform simultanous calculation of the fraction of donor-derived cfDNA.
 
-<br>
-
 ## **Pipeline Summary**
----
 
 1. Inital fastq QC ([`FASTQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Adpater/Quality trimming ([`Trim Galore`](https://github.com/FelixKrueger/TrimGalore))
@@ -33,10 +25,8 @@
 7. Pileup and dd-cfDNA calculation ([`samtools`](https://www.htslib.org))
 8. Report Generation ([`MultiQC`](https://multiqc.info))
 
-<br>
-
 ## **Download and Setup**
----
+
 First the Github Repo needs to be cloned.
 
 ```
@@ -49,30 +39,26 @@ The these following dependencies need to be available:
 - Conda
 - Snakemake > 7.17
 
-
 > **Note**
 > For the pipeline to run, a conda environment will be created with all necessary dependencies and will be done automatically.
 These above requirements are only needed to launch the pipeline.
 
-<br>
 
 ## **Usage**
----
 
 ```
 snakemake -c [threads] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
 ```
-For detailed explanation of the Snakemake argument please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#). It also go into detail when you 
+For detailed explanation of the Snakemake argument please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#). It also goes into detail when the pipeline should be run a an HPC cluster.
+
 > **Note**
 > To test whether the pipeline would run the argument --dry-run can be added preventing from acutally running the pipeline.
 
 
 add keyword: snakemake and workflow --> https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html
 
-<br>
-
 ## **Output Folder Structure**
----
+
 Below is the structure of the output folder:
 
 ``` 
