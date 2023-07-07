@@ -1,0 +1,27 @@
+name: twist_TOO
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - fastqc
+  - trim-galore
+  - bwameth
+  - sambamba
+  - samtools
+  - preseq
+  - qualimap
+  - biscuit
+  - bedtools
+  - parallel
+  - fgbio
+  - umi_tools
+  - pyyaml
+  - picard
+  - cython
+  - pyfasta
+  - statsmodels
+  - pip
+  - pip:
+    - srslyumi
+    - msgpack==0.5.6
+    - git+https://github.com/ewels/MultiQC.git
