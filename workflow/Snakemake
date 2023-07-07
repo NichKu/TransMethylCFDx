@@ -1,6 +1,5 @@
-#from snakemake.utils import min_version
-
-#min_version("7.17.0")
+from snakemake.utils import min_version
+min_version("7.17.0")
 
 ################################################################################
 # Allow users to fix the underlying OS via singularity.
@@ -10,33 +9,35 @@
 ################################################################################
 # Set config file directory
 ################################################################################
+
 configfile: "../config/config.yaml"
 
 ################################################################################
 # Get all sample wildcards in the input sample directory
 ################################################################################
+
 SAMPLES, = glob_wildcards(config['fastqdir'] + "/{sample}_R1.fastq.gz")
-#print(SAMPLES)
+print(SAMPLES)
 
 ################################################################################
 # Threads
 ################################################################################
+
 demultiplex_threads=10
 fastqc_threads=5
 trim_threads=5 #(not more than 8)
-align_threads=15
+align_threads=10
 index_threads=2
-sort_filt_threads=10
+sort_filt_threads=5
 dedup_threads=10
-qc_align_threads=20
+qc_align_threads=5
 finalQC_threads=2
 
-def get_interval_list_path(bed, target_dir):
-        base=os.path.basename(bed)
-        split_base=os.path.splitext(base)
-        file_name=os.path.splitext(base)[0]
-        output_file = target_dir + "/" + file_name + ".interval_list"
-        return output_file
+################################################################################
+# Interval file path creation
+################################################################################
+
+include: "rules/common.smk"
 
 output_file_all_target_interval_list = get_interval_list_path(config["targetregions_all"], config["interval_list_out_dir"])
 output_file_all_bait_interval_list = get_interval_list_path(config["bait_regions_all"], config["interval_list_out_dir"])
@@ -45,7 +46,12 @@ output_file_meth_bait_interval_list = get_interval_list_path(config["bait_region
 output_file_snp_target_interval_list = get_interval_list_path(config["targetregions_snp"], config["interval_list_out_dir"])
 output_file_snp_bait_interval_list = get_interval_list_path(config["bait_regions_snp"], config["interval_list_out_dir"])
 
+################################################################################
+# Snakemake rule files
+################################################################################
+
 #include: "rules/demultiplex_UMI.smk"
+include: "rules/index_ref.smk"
 include: "rules/interval_list.smk"
 include: "rules/qc_init.smk"
 include: "rules/trim.smk"
@@ -53,11 +59,11 @@ include: "rules/qc_trimmed.smk"
 include: "rules/align.smk"
 include: "rules/deduplicate.smk"
 include: "rules/qc_aligment.smk"
-include: "rules/methylation_extraction.smk"
 include: "rules/dd-cfDNA_calc.smk"
 include: "rules/methyl_ctrl.smk"
+include: "rules/methyl_NEBctrl.smk"
 include: "rules/finalQC_report.smk"
-        
+
 rule all:
     input:
        #expand(config["out_fastq"] + "/Stats/Stats.json"),
@@ -67,28 +73,41 @@ rule all:
        expand(output_file_meth_bait_interval_list),
        expand(output_file_snp_target_interval_list),
        expand(output_file_snp_bait_interval_list),
+       expand(config['reference_w_ctrl'] + "{end}", 
+              ext=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
+       expand(config['reference_wo_ctrl'] + "{end}", 
+              ext=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
        expand(config['resultsdir'] + "/results/1_fastqc_init/{sample}_R{mate}_fastqc.{ext}",
               sample=SAMPLES, mate=[1, 2], ext=['html', 'zip']),
        expand(config['resultsdir'] + "/results/3_fastqc_trimmed/{sample}_R{mate}_val_{mate}_fastqc.{ext}",
               sample=SAMPLES, mate=[1, 2], ext=['html', 'zip']),
        expand(config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/5_dedup/{sample}_filt.cons.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/5_dedup/{sample}_filt_dedup_umitools.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/5_dedup/{sample}{ending}", 
-              ending=["_edit_distance.tsv", "_per_umi_per_position.tsv", "_per_umi.tsv"], sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/6_aligment_QC/{sample}/{sample}.{ext}",
-              sample=SAMPLES, ext=['bam.flagstat', 'lc_extrap.txt']),
-       expand(config['resultsdir'] + "/results/6_aligment_QC/{sample}/{sample}.{end}", sample=SAMPLES, end=["meth_per_target_coverage.txt", "snp_per_target_coverage.txt"]),
+       expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.cons.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}{end}", 
+              end=["_edit_distance.tsv", "_per_umi_per_position.tsv", "_per_umi.tsv"], sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}.bam.flagstat", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/preseq/{sample}.lc_extrap.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/all_metrics/{sample}.all_hs_metrics.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/meth_metrics/{sample}.meth_hs_metrics.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/meth_per_target_metrics/{sample}.meth_per_target_coverage.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/snp_metrics/{sample}.snp_hs_metrics.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/6_aligment_QC/{sample}/{sample}.idxstats.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/6_aligment_QC/{sample}/qualimapReport.html", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/snp_per_target_metrics/{sample}.snp_per_target_coverage.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/gcbias_metrics/{sample}.{ext}", sample=SAMPLES, 
+              ext=["bam_gc_metrics.txt", "bam_gcbias_summary.txt", "bam_gcbias.pdf"]),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_cons.pileup.tsv", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_dedup.pileup.tsv", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_dedup_umitools.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda_filt_dedup_umitools.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19_filt_dedup_umitools.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report.html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html")   
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html")
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_lambda.html"),
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_pUC19.html")

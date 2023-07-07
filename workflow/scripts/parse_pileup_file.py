@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-# Eilon Sharon Oct 2014
+# Nicholas Kueng Jan 2023
 
 
 """
 ###############################################################################
+# This file is a copy of the following file: https://github.com/eilon-s/ddcfDNA/blob/master/parse_pileup_file.py, and has not been modified.
+# below is the original explanation:
 # parses pileup base string and returns the counts for all possible alleles 
 # for each position
 # reads input (mpileup output) from sys.stdin

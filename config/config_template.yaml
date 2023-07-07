@@ -1,0 +1,62 @@
+#########################################################################
+# This file provides the configurations for the pipeline to run.
+#########################################################################
+
+# Add below the paths to the ...
+
+# runfolder if demultiplexing and bcl to fastq conversion is desired
+runfolder: /path/to/
+out_fastq: /path/to/
+
+# fastq file
+fastqdir: /path/to/fastqs
+
+# results directory, this directory will be created, please specify the name of this directory where all results will be stored
+resultsdir: /path/to/results_dir
+
+# temporary folder directory
+tmp-dir: /path/to/tmp
+
+# path to config file for the multiqc module.
+multiqc_config: "../config/muliqc_config.yaml" # Do not change !!
+
+
+#########################################################################
+# Reference and Target regions Directories
+#########################################################################
+
+# files required for panel specific metrics collection
+targetregions_all: /path/to/
+targetregions_meth: /path/to/
+targetregions_snp: /path/to/
+
+bait_regions_all: /path/to/
+bait_regions_meth: /path/to/
+bait_regions_snp: /path/to/
+
+interval_list_out_dir: /path/to/
+
+# reference genome (with index file in same directory)
+genome_version: hg38_bsctrl        #add the name of the genome version (hg19, hg38, etc.)
+reference_w_ctrl: /path/to/referenceWithControlSequences
+reference_wo_ctrl: /path/to/referenceWithOutControlSequences
+
+# add here the reference files (with index file in same directory)
+# these are the control sequences (unmethylated, fully methylated etc. which are in the reference_w_ctrl)
+reference_cerebis: /path/to/
+reference_lambda: /path/to/unmethylatedLambda
+reference_pUC19: /path/to/methylatedpUC19
+sequence_dictionary_output_dir: /path/to/ #the output dir of the generated .dict files
+
+# these are used for the BISUIT module (more info see https://huishenlab.github.io/biscuit/docs/faq.html)
+biscuit_assets_dir: /data/users/nkueng/references/biscuit_assets/hg19
+biscuit_assets_cerebis_dir: /data/users/nkueng/references/biscuit_assets/cerebis
+biscuit_assets_lambda_dir: /data/users/nkueng/references/biscuit_assets/lambda
+biscuit_assets_pUC19_dir: /data/users/nkueng/references/biscuit_assets/pUC19
+
+#########################################################################
+# paramters
+##########################################################################
+reads_per_umi: 1  # reads per umi for consensus read creation
+umi_tools_grouping_method: directional # method for UMI grouping, directional is default (https://umi-tools.readthedocs.io/en/latest/reference/dedup.html)
+remove_dup_picard: true # remove duplicates with MarkDuplicates from picard, options: true or false

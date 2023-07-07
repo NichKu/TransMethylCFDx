@@ -2,9 +2,9 @@ rule move_umi_to_rx_tag:
         input:
                 bam_sorted = config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam"
         output:
-                bam_sorted_UMIrx = temp(config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam")
+                bam_sorted_UMIrx = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam")
         log:
-                bamtag_log = config['resultsdir'] + "/logs/5_dedup/{sample}.rxbamtag.log"
+                bamtag_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.rxbamtag.log"
         conda:
                 "envs/twist_target.yaml"
         shell:
@@ -19,11 +19,11 @@ rule move_umi_to_rx_tag:
 
 rule index_rxbam:
         input:
-                rx_bam = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam"
+                rx_bam = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam"
         output:
-                config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam.bai"
+                temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam.bai")
         log:
-                config['resultsdir'] + "/logs/5_dedup/{sample}.index_rxbam.log"
+                config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.index_rxbam.log"
         threads: index_threads
         shell:
                 """
@@ -32,18 +32,18 @@ rule index_rxbam:
 
 rule group_umi_umitools:
         input:
-                bam_filt_UMIrx = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam",
-                bam_filt_UMIrx_index = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam.bai"
+                bam_filt_UMIrx = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam",
+                bam_filt_UMIrx_index = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam.bai"
         output:
-                bam_filt_UMIgrouped = config['resultsdir'] + "/results/5_dedup/{sample}_filt.umi.bam",
-                bam_filt_UMItsv = config['resultsdir'] + "/results/5_dedup/{sample}_filt.umitools.tsv",
-                bam_filt_UMIgrouped_sort = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort.umi.bam",
-                bam_filt_UMIgrouped_sort_coord = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort_coord.umi.bam"
+                bam_filt_UMIgrouped = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.umi.bam"),
+                bam_filt_UMItsv = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.umitools.tsv"),
+                bam_filt_UMIgrouped_sort = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort.umi.bam"),
+                bam_filt_UMIgrouped_sort_coord = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam")
         log:
-                log_umitools = config['resultsdir'] + "/logs/5_dedup/{sample}.umitools_group.log",
-                error = config['resultsdir'] + "/logs/5_dedup/{sample}.umitools_group.err",
-                log_sort = config['resultsdir'] + "/logs/5_dedup/{sample}.sort.log",
-                log_sort_coord = config['resultsdir'] + "/logs/5_dedup/{sample}.sort.log"
+                log_umitools = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.umitools_group.log",
+                error = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.umitools_group.err",
+                log_sort = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.sort.log",
+                log_sort_coord = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.sort.log"
         params:
                 min_map_q=0,
                 random_seed=42
@@ -83,11 +83,11 @@ rule group_umi_umitools:
 
 rule index_umi_bam:
         input:
-                bam_filt_UMIgrouped_sort_coord = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort_coord.umi.bam"
+                bam_filt_UMIgrouped_sort_coord = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam"
         output:
-                config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort_coord.umi.bam.bai"
+                temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam.bai")
         log:
-                config['resultsdir'] + "/logs/5_dedup/{sample}.index_umibam.log"
+                config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.index_umibam.log"
         threads: index_threads
         shell:
                 """
@@ -96,18 +96,18 @@ rule index_umi_bam:
 
 rule UMI_dedup:
         input:
-                bam_filt_UMIgrouped_sort_coord = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort_coord.umi.bam",
-                bam_filt_UMIgrouped_sort_coord_index = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort_coord.umi.bam.bai"
+                bam_filt_UMIgrouped_sort_coord = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam",
+                bam_filt_UMIgrouped_sort_coord_index = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam.bai"
         output:
-                config['resultsdir'] + "/results/5_dedup/{sample}_edit_distance.tsv",
-                config['resultsdir'] + "/results/5_dedup/{sample}_per_umi_per_position.tsv",
-                config['resultsdir'] + "/results/5_dedup/{sample}_per_umi.tsv",
-                bam_dedup = config['resultsdir'] + "/results/5_dedup/{sample}_filt_dedup_umitools.bam"
+                config['resultsdir'] + "/results/5_dedup_consensus/{sample}_edit_distance.tsv",
+                config['resultsdir'] + "/results/5_dedup_consensus/{sample}_per_umi_per_position.tsv",
+                config['resultsdir'] + "/results/5_dedup_consensus/{sample}_per_umi.tsv",
+                bam_dedup = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam"
         log:
-                umitoolsdedup_log = config['resultsdir'] + "/logs/5_dedup/{sample}.dedup_umitools.log"
+                umitoolsdedup_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.dedup_umitools.log"
         params:
                 grouping_method = config['umi_tools_grouping_method'],
-                output_prefix = config['resultsdir'] + "/results/5_dedup/{sample}"
+                output_prefix = config['resultsdir'] + "/results/5_dedup_consensus/{sample}"
         conda:
                 "envs/twist_target.yaml"
         shell:
@@ -127,12 +127,12 @@ rule UMI_dedup:
 
 rule setmateinfo:
         input:
-                bam_filt_UMIrx = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.bam"
+                bam_filt_UMIrx = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam"
         output:
-                bam_filt_UMIrx_setmate = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.setmate.bam"
+                bam_filt_UMIrx_setmate = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.setmate.bam"
         log:
-                log_sort_query = config['resultsdir'] + "/logs/5_dedup/{sample}.sort_queryname.log",
-                log_setmateinfo = config['resultsdir'] + "/logs/5_dedup/{sample}.SetMateInformation_fgbio.log"
+                log_sort_query = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.sort_queryname.log",
+                log_setmateinfo = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.SetMateInformation_fgbio.log"
         params:
                 tmp_dir=config['tmp-dir']
         conda:
@@ -155,12 +155,12 @@ rule setmateinfo:
 
 rule group_UMI_fgbio:
         input:
-                bam_filt_UMIrx_setmate = config['resultsdir'] + "/results/5_dedup/{sample}_filt.rx.setmate.bam"
+                bam_filt_UMIrx_setmate = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.setmate.bam"
         output:
-                bam_filt_UMIgrouped = config['resultsdir'] + "/results/5_dedup/{sample}_filt.fgbio.bam",
-                histo = config['resultsdir'] + "/results/5_dedup/{sample}.fgbio.histo.tsv"
+                bam_filt_UMIgrouped = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.fgbio.bam",
+                histo = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.fgbio.histo.tsv"
         log:
-                fgbio_log = config['fastqdir'] +"/logs/5_dedup/{sample}_filt.group_fgbio.log"
+                fgbio_log = config['fastqdir'] +"/logs/5_dedup_consensus/{sample}_filt.group_fgbio.log"
         conda:
                 "envs/twist_target.yaml"
         threads: dedup_threads
@@ -175,11 +175,11 @@ rule group_UMI_fgbio:
 
 rule fgbio_consensus_read:
         input:
-                bam_filt_UMIgrouped_sort = config['resultsdir'] + "/results/5_dedup/{sample}_filt_sort.umi.bam"
+                bam_filt_UMIgrouped_sort = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort.umi.bam"
         output:
-                bam_filt_cons = config['resultsdir'] + "/results/5_dedup/{sample}_filt.cons.bam"    
+                bam_filt_cons = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.cons.bam")
         log:
-                fgbio_log = config['resultsdir'] +"/logs/5_dedup/{sample}.consensus.log"
+                fgbio_log = config['resultsdir'] +"/logs/5_dedup_consensus/{sample}.consensus.log"
         params:
                 tmp_dir=config['tmp-dir'],
                 reads_per_umi=config['reads_per_umi']
@@ -202,30 +202,30 @@ rule fgbio_consensus_read:
 
 rule consensus_bam_to_fastq:
         input:
-                bam_filt_cons = config['resultsdir'] + "/results/5_dedup/{sample}_filt.cons.bam"
+                bam_filt_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.cons.bam"
         output:
-                R1_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.R1.fastq.gz",
-                R2_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.R2.fastq.gz"
+                R1_cons = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R1.fastq.gz"),
+                R2_cons = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R2.fastq.gz")
         log:
-        params:
+                fastq_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.bamtofastq.log"
         conda:
                 "envs/twist_target.yaml"
         threads:
                 align_threads
         shell:
                 """
-                samtools fastq -@ {threads} -1 {output.R1_cons} -2 {output.R2_cons} {input.bam_filt_cons}
+                samtools fastq -@ {threads} -1 {output.R1_cons} -2 {output.R2_cons} {input.bam_filt_cons} 2> {log.fastq_log}
                 """
 
 rule align_consensus_reads:
         input:
-                R1_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.R1.fastq.gz",
-                R2_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.R2.fastq.gz"      
+                R1_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R1.fastq.gz",
+                R2_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R2.fastq.gz"      
         output:
-                bam_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.bam"
+                bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.bam"
         log:
-                align_log = config['resultsdir'] + "/logs/8_dd-cfDNA/{sample}.cons_bwameth.log",
-                samb_log = config['resultsdir'] + "/logs/8_dd-cfDNA/{sample}.cons_toBam_sambamba.log" # change to toBam!!!!
+                align_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons_bwameth.log",
+                samb_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons_toBam_sambamba.log"
         params:
                 reference = config['reference_wo_ctrl']
         conda:
@@ -252,11 +252,11 @@ rule align_consensus_reads:
 
 rule sort_cons:
     input:
-        bam_cons = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.bam"
+        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.bam"
     output:
-        bam_cons_sort = config['resultsdir'] + "/results/8_dd-cfDNA/{sample}.cons.sort.bam"
+        bam_cons_sort = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
     log:
-        sort_cons_log = config['resultsdir'] + "/logs/8_dd-cfDNA/{sample}.cons.sort.sambamba.log"
+        sort_cons_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons.sort.sambamba.log"
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:

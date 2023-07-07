@@ -1,0 +1,48 @@
+#######################################
+# MultiQC Configuration File
+#######################################
+
+# This file can be saved either in the MultiQC installation
+# directory, or as ~/.multiqc_config.yaml
+
+# Configuration settings are taken from the following locations, in order:
+# - Hardcoded in MultiQC (multiqc/utils/config.py)
+# - <installation_dir>/multiqc_config.yaml
+# - ~/.multiqc_config.yaml
+# - Command line options
+
+# Note that all of the values below are set to the MultiQC defaults.
+# It's recommended that you delete any that you don't need.
+
+---
+# Title to use for the report.
+title: "Title"
+subtitle: "subtitle"
+intro_text: "intro_text"
+report_comment: "comment"
+
+# Specify a custom logo to add to reports (uncomment to use)
+custom_logo: null # '/path/to/logo.png'
+custom_logo_url: null # 'https://www.example.com'
+custom_logo_title: null # 'Our Institute Name'
+
+# Add generic information to the top of reports
+report_header_info:
+  - Example Config:: "This is arbitrary"
+  - Another field:: "Loaded from <code>multiqc_config_example.yaml</code>"
+  - Something different:: "You can put any key-value pairs here"
+  - Want to know more?: 'See the <a href="http://multiqc.info/docs" target="_blank">MultiQC docs</a>'
+
+# Overwrite the defaults of which table columns are visible by default
+table_columns_visible:
+  FastQC:
+    percent_fails: False
+    total_sequences: True
+
+# Overwrite that the sample names will be the file names for the module listed below
+use_filename_as_sample_name:
+  - fastqc
+
+custom_plot_config:
+  picard_percentage_target_bases:
+    xmax=5000

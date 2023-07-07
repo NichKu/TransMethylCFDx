@@ -1,9 +1,13 @@
+"""
+extract the controls CEREBIS
+"""
+
 rule extract_cerebis_bam:
     input:
         bam_wCEREBIS = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam",
         bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_wCEREBIS_sorted.bam.bai"
     output:
-        bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS.bam"
+        bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.bam"
     log:
     conda:
         "envs/twist_target.yaml"
@@ -12,13 +16,17 @@ rule extract_cerebis_bam:
         samtools view -b -h -o {output.bam_CEREBIS} {input.bam_wCEREBIS} CEREBIS
         """
 
+"""
+filter the bam files of the controls CEREBIS
+"""
+
 rule filter_bam_cerebis:
     input:
-        bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS.bam"
+        bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.bam"
     output:
-        bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt.bam"
+        bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt.bam"
     log:
-        filt_bam_log = config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}_CEREBIS.filt_sambamba.log"
+        filt_bam_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.filt_sambamba.log"
     conda:
         "envs/twist_target.yaml"
     shell:
@@ -33,13 +41,18 @@ rule filter_bam_cerebis:
         2> {log.filt_bam_log}
         """
 
+
+"""
+move the UMI tag, index, sort and deduplicate the bam files of the controls CEREBIS
+"""
+
 rule move_umi_to_rx_tag_cerebis:
         input:
-                bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt.bam"
+                bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt.bam"
         output:
-                bam_sorted_UMIrx = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt.rx.bam"
+                bam_sorted_UMIrx = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt.rx.bam"
         log:
-                bamtag_log = config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}.rxbamtag.log"
+                bamtag_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.rxbamtag.log"
         conda:
                 "envs/twist_target.yaml"
         shell:
@@ -53,11 +66,11 @@ rule move_umi_to_rx_tag_cerebis:
 
 rule sort_bam_cerebis:
         input:
-                bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt.rx.bam"
+                bam_CEREBIS_filt = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt.rx.bam"
         output:
-                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_sort.rx.bam"
+                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_sort.rx.bam"
         log:
-                config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}.sort.log"
+                config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.sort.log"
         conda:
                 "envs/twist_target.yaml"
         threads: dedup_threads
@@ -72,11 +85,11 @@ rule sort_bam_cerebis:
 
 rule index_umi_bam_cerebis:
         input:
-                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_sort.rx.bam"
+                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_sort.rx.bam"
         output:
-                config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_sort.rx.bam.bai"
+                config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_sort.rx.bam.bai"
         log:
-                config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}.index_umibam.log"
+                config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.index_umibam.log"
         threads: index_threads
         shell:
                 """
@@ -85,18 +98,17 @@ rule index_umi_bam_cerebis:
 
 rule UMI_dedup_cerebis:
         input:
-                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_sort.rx.bam",
-                bam_CEREBIS_filt_sort_bai = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_sort.rx.bam.bai"
+                bam_CEREBIS_filt_sort = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_sort.rx.bam",
+                bam_CEREBIS_filt_sort_bai = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_sort.rx.bam.bai"
         output:
-                config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_edit_distance.tsv",
-                config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_per_umi_per_position.tsv",
-                config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_per_umi.tsv",
-                bam_dedup = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_dedup_umitools.bam"
+                config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_edit_distance.tsv",
+                config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_per_umi.tsv",
+                bam_dedup = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam"
         log:
-                umitoolsdedup_log = config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}.dedup_umitools.log"
+                umitoolsdedup_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.dedup_umitools.log"
         params:
                 grouping_method = config['umi_tools_grouping_method'],
-                output_prefix = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}"
+                output_prefix = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}"
         conda:
                 "envs/twist_target.yaml"
         shell:
@@ -114,19 +126,19 @@ rule UMI_dedup_cerebis:
 
 rule qc_methylation_cerebis:
     input:
-        bam_dedup = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}_CEREBIS_filt_dedup_umitools.bam"
+        bam_dedup = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam"
     output:
-        config['resultsdir'] + "/results/9_methyl_ctrl/{sample}/{sample}_CpHRetentionByReadPos.txt",
-        config['resultsdir'] + "/results/9_methyl_ctrl/{sample}/{sample}_totalReadConversionRate.txt",
-        config['resultsdir'] + "/results/9_methyl_ctrl/{sample}/{sample}_CpGRetentionByReadPos.txt",
-        bsstrand = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}/{sample}_strand_qc.txt"
+        config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpHRetentionByReadPos.txt",
+        config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_totalReadConversionRate.txt",
+        config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpGRetentionByReadPos.txt",
+        bsstrand = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_strand_qc.txt"
     params:
-        reference = config['reference_ctrl'],
-        output_dir = config['resultsdir'] + "/results/9_methyl_ctrl/{sample}",
+        reference = config['reference_cerebis'],
+        output_dir = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}",
         assets = config['biscuit_assets_cerebis_dir']
     log:
-        qc_sh = config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}_CEREBIS.biscuit_qc.log",
-        biscuit_log = config['resultsdir'] + "/logs/9_methyl_ctrl/{sample}_CEREBIS.biscuit_bsstrand.log"
+        qc_sh = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.biscuit_qc.log",
+        biscuit_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.biscuit_bsstrand.log"
     conda:
         "envs/twist_target.yaml"
     shell:
@@ -136,8 +148,8 @@ rule qc_methylation_cerebis:
             {params.assets} \
             {params.reference} \
             {wildcards.sample} \
-            {input.bam_dedup} \        
-        2> {log.qc_sh}
+            {input.bam_dedup} \
+        2> {log.qc_sh} || true
         biscuit bsstrand \
             {params.reference} \
             {input.bam_dedup} \
