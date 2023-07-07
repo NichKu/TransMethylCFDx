@@ -10,7 +10,7 @@ rule fastqc_trimmed:
     log:
         fastqc_trimmed_log = config['resultsdir'] + "/logs/3_fastqc_trimmed/{sample}.fastqc_trimmed.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     params:
         output_dir = config['resultsdir'] + "/results/3_fastqc_trimmed/"
     threads: fastqc_threads

@@ -6,7 +6,7 @@ rule move_umi_to_rx_tag:
         log:
                 bamtag_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.rxbamtag.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 srslyumi-bamtag \
@@ -48,7 +48,7 @@ rule group_umi_umitools:
                 min_map_q=0,
                 random_seed=42
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -109,7 +109,7 @@ rule UMI_dedup:
                 grouping_method = config['umi_tools_grouping_method'],
                 output_prefix = config['resultsdir'] + "/results/5_dedup_consensus/{sample}"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 umi_tools dedup \
@@ -136,7 +136,7 @@ rule setmateinfo:
         params:
                 tmp_dir=config['tmp-dir']
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: sort_filt_threads
         shell:
                 """
@@ -162,7 +162,7 @@ rule group_UMI_fgbio:
         log:
                 fgbio_log = config['fastqdir'] +"/logs/5_dedup_consensus/{sample}_filt.group_fgbio.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -186,7 +186,7 @@ rule fgbio_consensus_read:
         resources:
                 mem_mb=5000
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -209,7 +209,7 @@ rule consensus_bam_to_fastq:
         log:
                 fastq_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.bamtofastq.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads:
                 align_threads
         shell:
@@ -229,7 +229,7 @@ rule align_consensus_reads:
         params:
                 reference = config['reference_wo_ctrl']
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: align_threads
         shell:
                 """
@@ -260,7 +260,7 @@ rule sort_cons:
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: sort_filt_threads
     shell:
         """

@@ -10,7 +10,7 @@ rule trim_adapter:
     params:
         output_dir = config['resultsdir'] + "/results/2_trimmed/"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: trim_threads
     shell:
         """

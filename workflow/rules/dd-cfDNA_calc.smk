@@ -9,7 +9,7 @@ rule pileup:
     log:
         pileup_cons_log = config['resultsdir'] + "/logs/8_dd-cfDNA/{sample}.pileup_cons.log"
     conda:
-         "envs/twist_target.yaml"
+         "../envs/twist_target.yaml"
     shell:
         """
         samtools mpileup \
@@ -33,7 +33,7 @@ rule pileup_dedup:
     log:
         pileup_dedup_log = config['resultsdir'] + "/logs/8_dd-cfDNA/{sample}.pileup_dedup.log"
     conda:
-         "envs/twist_target.yaml"
+         "../envs/twist_target.yaml"
     shell:
         """
         samtools mpileup \

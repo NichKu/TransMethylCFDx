@@ -41,7 +41,7 @@ rule multiqc:
         out_directory = config['resultsdir'] + "/results/10_multiqc/",
         multiqc_config = config['multiqc_config']
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: finalQC_threads
     shell:
         """

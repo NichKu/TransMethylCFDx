@@ -10,7 +10,7 @@ rule extract_lambda_bam:
         bam_lambda = config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda.bam"
     log:
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         samtools view -b -h -o {output.bam_lambda} {input.bam_wCEREBIS} "J02459.1"
@@ -24,7 +24,7 @@ rule extract_pUC19_bam:
         bam_pUC19 = config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19.bam"
     log:
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         samtools view -b -h -o {output.bam_pUC19} {input.bam_wCEREBIS} "M77789.2"
@@ -42,7 +42,7 @@ rule filter_bam_lambda:
     log:
         filt_bam_log = config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}.filt_sambamba.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         sambamba view \
@@ -63,7 +63,7 @@ rule filter_bam_pUC19:
     log:
         filt_bam_log = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}.filt_sambamba.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         sambamba view \
@@ -88,7 +88,7 @@ rule move_umi_to_rx_tag_lambda:
         log:
                 bamtag_log = config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}.rxbamtag.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 srslyumi-bamtag \
@@ -106,7 +106,7 @@ rule sort_bam_lambda:
         log:
                 config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}.sort.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -145,7 +145,7 @@ rule UMI_dedup_lambda:
                 grouping_method = config['umi_tools_grouping_method'],
                 output_prefix = config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 umi_tools dedup \
@@ -167,7 +167,7 @@ rule move_umi_to_rx_tag_pUC19:
         log:
                 bamtag_log = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}.rxbamtag.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 srslyumi-bamtag \
@@ -185,7 +185,7 @@ rule sort_bam_pUC19:
         log:
                 config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}.sort.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -224,7 +224,7 @@ rule UMI_dedup_pUC19:
                 grouping_method = config['umi_tools_grouping_method'],
                 output_prefix = config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 umi_tools dedup \
@@ -254,7 +254,7 @@ rule qc_methylation_lambda:
         qc_sh = config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}_lambda.biscuit_qc.log",
         biscuit_log = config['resultsdir'] + "/logs/9_methyl_ctrl/lambda/{sample}_lambda.biscuit_bsstrand.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         QC.sh \
@@ -287,7 +287,7 @@ rule qc_methylation_puc19:
         qc_sh = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}_pUC19.biscuit_qc.log",
         biscuit_log = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19/{sample}_pUC19.biscuit_bsstrand.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         QC.sh \

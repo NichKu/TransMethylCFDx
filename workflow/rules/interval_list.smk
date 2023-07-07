@@ -6,7 +6,7 @@ rule create_seq_dict:
     log:
         seq_dict_log = config['resultsdir'] + "/logs/0_prepare_files/SeqDictCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard CreateSequenceDictionary \
@@ -24,7 +24,7 @@ rule create_all_target_interval_list:
     log:
         target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/AllTargetIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \
@@ -43,7 +43,7 @@ rule create_meth_target_interval_list:
     log:
         target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/MethTargetIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \
@@ -62,7 +62,7 @@ rule create_snp_target_interval_list:
     log:
         target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/SNPTargetIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \
@@ -81,7 +81,7 @@ rule create_all_bait_interval_list:
     log:
         bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/AllBaitIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \
@@ -100,7 +100,7 @@ rule create_meth_bait_interval_list:
     log:
         bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/MethBaitIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \
@@ -119,7 +119,7 @@ rule create_snp_bait_interval_list:
     log:
         bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/SNPBaitIntervalListCreation.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard BedToIntervalList \

@@ -10,7 +10,7 @@ rule fastqc_init:
     log:
         fastqc_init_log = config['resultsdir'] + "/logs/1_fastqc_init/{sample}.fastqc_init.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     params:
         output_dir = config['resultsdir'] + "/results/1_fastqc_init/"
     threads: fastqc_threads

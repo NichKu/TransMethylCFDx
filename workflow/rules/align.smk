@@ -10,7 +10,7 @@ rule align:
     params:
         reference = config['reference_w_ctrl']
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: align_threads
     shell:
         """
@@ -40,7 +40,7 @@ rule sort_bam_wCEREBIS:
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: sort_filt_threads
     shell:
         """
@@ -61,7 +61,7 @@ rule index_bam_wCEREBIS:
     log:
         log_index = config['resultsdir'] + "/logs/4_alignment/{sample}.index_bam_wCEREBIS.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: index_threads
     shell:
         """
@@ -81,7 +81,7 @@ rule remove_CEREBIS:
     log:
         log_remove = config['resultsdir'] + "/logs/4_alignment/{sample}.removeCEREBIS.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         samtools view \
@@ -103,7 +103,7 @@ rule sort_unfilt_woCEREBIS:
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: sort_filt_threads
     shell:
         """
@@ -128,7 +128,7 @@ rule filter_bam_woCEREBIS:
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: sort_filt_threads
     shell:
         """
@@ -158,7 +158,7 @@ rule index_filt_bam:
     log:
         config['resultsdir'] + "/logs/4_alignment/{sample}.index_filt_bam.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: index_threads
     shell:
         """

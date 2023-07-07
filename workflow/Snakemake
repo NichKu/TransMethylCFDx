@@ -74,9 +74,9 @@ rule all:
        expand(output_file_snp_target_interval_list),
        expand(output_file_snp_bait_interval_list),
        expand(config['reference_w_ctrl'] + "{end}", 
-              ext=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
+              end=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
        expand(config['reference_wo_ctrl'] + "{end}", 
-              ext=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
+              end=[".bwameth.c2t", ".bwameth.c2t.amb", ".bwameth.c2t.ann", ".bwameth.c2t.bwt", ".bwameth.c2t.pac", ".bwameth.c2t.sa", ".fai"]),
        expand(config['resultsdir'] + "/results/1_fastqc_init/{sample}_R{mate}_fastqc.{ext}",
               sample=SAMPLES, mate=[1, 2], ext=['html', 'zip']),
        expand(config['resultsdir'] + "/results/3_fastqc_trimmed/{sample}_R{mate}_val_{mate}_fastqc.{ext}",
@@ -108,6 +108,6 @@ rule all:
        expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19_filt_dedup_umitools.bam", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report.html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html")
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html"),
        expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_lambda.html"),
        expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_pUC19.html")

@@ -10,7 +10,7 @@ rule extract_cerebis_bam:
         bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.bam"
     log:
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         samtools view -b -h -o {output.bam_CEREBIS} {input.bam_wCEREBIS} CEREBIS
@@ -28,7 +28,7 @@ rule filter_bam_cerebis:
     log:
         filt_bam_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.filt_sambamba.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         sambamba view \
@@ -54,7 +54,7 @@ rule move_umi_to_rx_tag_cerebis:
         log:
                 bamtag_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.rxbamtag.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 srslyumi-bamtag \
@@ -72,7 +72,7 @@ rule sort_bam_cerebis:
         log:
                 config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.sort.log"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         threads: dedup_threads
         shell:
                 """
@@ -110,7 +110,7 @@ rule UMI_dedup_cerebis:
                 grouping_method = config['umi_tools_grouping_method'],
                 output_prefix = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}"
         conda:
-                "envs/twist_target.yaml"
+                "../envs/twist_target.yaml"
         shell:
                 """
                 umi_tools dedup \
@@ -140,7 +140,7 @@ rule qc_methylation_cerebis:
         qc_sh = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.biscuit_qc.log",
         biscuit_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.biscuit_bsstrand.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         QC.sh \

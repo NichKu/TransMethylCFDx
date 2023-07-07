@@ -9,7 +9,7 @@ rule qc_alignment_dup:
         samtools_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.samtools.log",
         preseq_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.preseq.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     threads: qc_align_threads
     shell:
         """
@@ -47,7 +47,7 @@ rule qc_alignment_dedup:
         ref = config["reference_w_ctrl"],
         tmp_dir=config['tmp-dir']
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         picard CollectHsMetrics \
@@ -107,7 +107,7 @@ rule qc_alignment_qualimap:
         qualimap_outdir = config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}",
         panel_region = config['targetregions_all']
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     resources:
         mem_mb=6000
     threads: qc_align_threads
@@ -141,7 +141,7 @@ rule qc_methylation:
         qc_sh = config['resultsdir'] + "/logs/7_methylQC/{sample}.biscuit_qc.log",
         biscuit_log = config['resultsdir'] + "/logs/7_methylQC/{sample}.biscuit_bsstrand.log"
     conda:
-        "envs/twist_target.yaml"
+        "../envs/twist_target.yaml"
     shell:
         """
         QC.sh \
