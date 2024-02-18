@@ -26,10 +26,10 @@ print(SAMPLES)
 demultiplex_threads=10
 fastqc_threads=5
 trim_threads=5 #(not more than 8)
-align_threads=10
+align_threads=8
 index_threads=2
 sort_filt_threads=5
-dedup_threads=10
+dedup_threads=5
 qc_align_threads=5
 finalQC_threads=2
 
@@ -59,9 +59,10 @@ include: "rules/qc_trimmed.smk"
 include: "rules/align.smk"
 include: "rules/deduplicate.smk"
 include: "rules/qc_aligment.smk"
-include: "rules/dd-cfDNA_calc.smk"
 include: "rules/methyl_ctrl.smk"
-include: "rules/methyl_NEBctrl.smk"
+#include: "rules/methyl_NEBctrl.smk"
+include: "rules/pileup.smk"
+#include: "rules/dd-cfDNA_calc.smk"
 include: "rules/finalQC_report.smk"
 
 rule all:
@@ -97,17 +98,18 @@ rule all:
               ext=["bam_gc_metrics.txt", "bam_gcbias_summary.txt", "bam_gcbias.pdf"]),
        expand(config['resultsdir'] + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_cons.pileup.tsv", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_dedup.pileup.tsv", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_dd-cfDNAfraction.png", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda_filt_dedup_umitools.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19_filt_dedup_umitools.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report.html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_lambda.html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_pUC19.html")
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda_filt_dedup_umitools.bam", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19_filt_dedup_umitools.bam", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + ".html"),
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_CEREBIS.html")
+       #expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_lambda.html"),
+       #expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_pUC19.html")
