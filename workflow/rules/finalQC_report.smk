@@ -15,14 +15,14 @@ rule multiqc:
         expand(config['resultsdir'] + "/results/6_aligment_QC/gcbias_metrics/{sample}.{ext}", sample=SAMPLES, 
             ext=["bam_gc_metrics.txt", "bam_gcbias_summary.txt", "bam_gcbias.pdf"]),
         expand(config['resultsdir'] + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt", sample=SAMPLES),
-        expand(config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf", sample=SAMPLES),
-        expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-        expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES)
+        expand(config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf", sample=SAMPLES)
+        #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+        #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES)
     output:
-        multiqc_report = config['resultsdir'] + "/results/10_multiqc/multiqc_report.html"
-        #multiqc_report_cerebis = config['resultsdir'] + "/results/10_multiqc/multiqc_report_CEREBIS.html",
-        #multiqc_report_lambda = config['resultsdir'] + "/results/10_multiqc/multiqc_report_lambda.html",
-        #multiqc_report_pUC19 = config['resultsdir'] + "/results/10_multiqc/multiqc_report_pUC19.html"
+        multiqc_report = config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + ".html",
+        multiqc_report_cerebis = config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_CEREBIS.html",
+        #multiqc_report_lambda = config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_lambda.html",
+        #multiqc_report_pUC19 = config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_pUC19.html"
     log:
         multiqc_log_res = config['resultsdir'] + "/logs/10_multiqc/multiqc_report.results.log",
         multiqc_log_cerebis = config['resultsdir'] + "/logs/10_multiqc/multiqc_report.cerebis.log"
@@ -39,15 +39,17 @@ rule multiqc:
         scan_directory_pUC19_res = config['resultsdir'] + "/results/9_methyl_ctrl/pUC19",
         scan_directory_pUC19_log = config['resultsdir'] + "/logs/9_methyl_ctrl/pUC19",
         out_directory = config['resultsdir'] + "/results/10_multiqc/",
-        multiqc_config = config['multiqc_config']
+        multiqc_config = config['multiqc_config'],
+        project_name = config["project_run_name"]
     conda:
         "../envs/twist_target.yaml"
     threads: finalQC_threads
     shell:
         """
         pwd
-        multiqc {params.scan_directory} -c {params.multiqc_config} -f -d -dd 1 --ignore {params.scan_directory_exlusion_1} --ignore {params.scan_directory_exlusion_2} --outdir {params.out_directory} 2> {log.multiqc_log_res}
-        multiqc {params.scan_directory_cerebis_res} {params.scan_directory_cerebis_log} -f --outdir {params.out_directory} --filename multiqc_report_CEREBIS.html 2> {log.multiqc_log_cerebis}
+        multiqc {params.scan_directory} -f -d -dd 1 --ignore {params.scan_directory_exlusion_1} --ignore {params.scan_directory_exlusion_2} --outdir {params.out_directory} --filename multiqc_report_{params.project_name} 2> {log.multiqc_log_res}
+        multiqc {params.scan_directory_cerebis_res} {params.scan_directory_cerebis_log} -f --outdir {params.out_directory} --filename multiqc_report_{params.project_name}_CEREBIS.html 2> {log.multiqc_log_cerebis}
         """
-#multiqc {params.scan_directory_lambda_res} {params.scan_directory_lambda_log} -f --outdir {params.out_directory} --filename multiqc_report_lambda.html 2> {log.multiqc_log_lambda}
-#multiqc {params.scan_directory_pUC19_res} {params.scan_directory_pUC19_log} -f --outdir {params.out_directory} --filename multiqc_report_pUC19.html 2> {log.multiqc_log_pUC19}
+#-c {params.multiqc_config} # creates "The 'picard' MultiQC module broke..." error
+#multiqc {params.scan_directory_lambda_res} {params.scan_directory_lambda_log} -f --outdir {params.out_directory} --filename multiqc_report_{params.project_name}_lambda.html 2> {log.multiqc_log_lambda}
+#multiqc {params.scan_directory_pUC19_res} {params.scan_directory_pUC19_log} -f --outdir {params.out_directory} --filename multiqc_report_{params.project_name}_pUC19.html 2> {log.multiqc_log_pUC19}
