@@ -1,20 +1,20 @@
-# **Targeted Methylation Analysis Pipeline (TaMethPi)**
+# TransMethylCFDx - A pipeline for targeted methylation and genotype-based tissue of origin determination of cfDNA from transplant patients
 
-## **Overview**
+## Overview
 
 * [Overview](#overview)
 * [Introduction](#introduction)
 * [Pipeline Summary](#pipeline-summary)
 * [Requirements](#requirements)
 * [Download](#download)
-* [Usage](#usage)
+* [Usage Guide](#usage-guide)
 * [Output Folder Structure](#output-folder-structure)
 
-## **Introduction**
+## Introduction
 
-**TMethPi** is a pipeline for the analysis of targeted methylation sequencing data specifically designed to pre-process data for the deconvolution of cell-free DNA to determine the tissue of origin (TOO) but also perform simultanous calculation of the fraction of donor-derived cfDNA.
+**TransMethylCFDx** is a pipeline for the analysis of targeted methylation sequencing data specifically designed to pre-process data for the deconvolution of cell-free DNA to determine the tissue of origin (TOO) but also perform simultanous calculation of the fraction of donor-derived cfDNA.
 
-## **Pipeline Summary**
+## Pipeline Summary
 
 1. Inital fastq QC ([`FASTQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 2. Adpater/Quality trimming ([`Trim Galore`](https://github.com/FelixKrueger/TrimGalore))
@@ -26,7 +26,7 @@
 8. Report Generation ([`MultiQC`](https://multiqc.info))
 
 
-## **Requirements**
+## Requirements
 
 The these following dependencies need to be available:
 - Conda >= 4.10
@@ -36,18 +36,18 @@ The these following dependencies need to be available:
 > For the pipeline to run, a conda environment will be created with all necessary dependencies and will be done automatically.
 These above requirements are only needed to launch the pipeline.
 
-## **Download**
+## Download
 
-After ensuring the dependencies are available, the Github Repo needs to be cloned.
+Clone the Github Repo:
 
 ```
-git clone https://github.com/NichKu/TMethPi.git
-cd TMethPi/workflow
+https://github.com/NichKu/TransMethylCFDx.git
+cd TransMethylCFDx/workflow
 ```
 
-## **Usage**
+## Quick Start
 
-To launch the analysis run the following command:
+To launch the analysis, run the following command:
 
 ```
 snakemake --cores [n] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
@@ -61,7 +61,22 @@ For detailed explanation of the Snakemake arguments please refer to the [User Gu
 
 add keyword: snakemake and workflow --> https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html
 
-## **Output Folder Structure**
+## Usage Guide
+
+To set up and launch the pipline, the steps listed below should be followed:
+
+1. Clone the github repo
+2. Install the dependencies outlined in [Requirements](#requirements)
+3. Go to /Config and configure the config.yaml file
+4. cd 
+
+#### Resources
+The number of cores being allocated to each job is configured in the Snakemake file under # Threads. The pipline is recommended to be launched with at least 10 CPUs. The pipline has been tested using 4GB RAM per CPU.
+
+
+
+
+## Output Folder Structure
 
 Below is the structure of the output folder:
 

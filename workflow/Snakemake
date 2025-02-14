@@ -1,3 +1,8 @@
+__author__ = "Nicholas Kueng"
+__copyright__ = "Copyright 2023, Nicholas Kueng"
+__license__ = "MIT"
+
+################################################################################
 from snakemake.utils import min_version
 min_version("7.17.0")
 
@@ -23,13 +28,14 @@ print(SAMPLES)
 # Threads
 ################################################################################
 
-demultiplex_threads=10
-fastqc_threads=5
-trim_threads=5 #(not more than 8)
+#demultiplex_threads=10
+fastqc_threads=3
+trim_threads=3 #(not more than 8)
 align_threads=8
-index_threads=2
-sort_filt_threads=5
+index_threads=1
+sort_filt_threads=4
 dedup_threads=5
+bam2pat_threads=2
 qc_align_threads=5
 finalQC_threads=2
 
@@ -62,6 +68,7 @@ include: "rules/qc_aligment.smk"
 include: "rules/methyl_ctrl.smk"
 #include: "rules/methyl_NEBctrl.smk"
 include: "rules/pileup.smk"
+#include: "rules/bam2pat.smk"
 #include: "rules/dd-cfDNA_calc.smk"
 include: "rules/finalQC_report.smk"
 
@@ -85,9 +92,11 @@ rule all:
        expand(config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.cons.bam", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.{end}", end=["bam", "bam.bai"] ,sample=SAMPLES),
        expand(config['resultsdir'] + "/results/5_dedup_consensus/{sample}{end}", 
               end=["_edit_distance.tsv", "_per_umi_per_position.tsv", "_per_umi.tsv"], sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}.bam.flagstat", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}_cons.bam.flagstat", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/preseq/{sample}.lc_extrap.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/all_metrics/{sample}.all_hs_metrics.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/meth_metrics/{sample}.meth_hs_metrics.txt", sample=SAMPLES),
@@ -98,18 +107,19 @@ rule all:
               ext=["bam_gc_metrics.txt", "bam_gcbias_summary.txt", "bam_gcbias.pdf"]),
        expand(config['resultsdir'] + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf", sample=SAMPLES),
-       #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       #expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       expand(config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_cons.pileup.tsv", sample=SAMPLES),
        expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_dedup.pileup.tsv", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_bam2pat/{sample}.{ext}", sample=SAMPLES, ext=["pat.gz", "pat.gz.csi"]),
        #expand(config['resultsdir'] + "/results/8_dd-cfDNA/{sample}_dd-cfDNAfraction.png", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS_filt_dedup_umitools.bam", sample=SAMPLES),
+       #expand(config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
        #expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}_lambda_filt_dedup_umitools.bam", sample=SAMPLES),
        #expand(config['resultsdir'] + "/results/9_methyl_ctrl/lambda/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
        #expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}_pUC19_filt_dedup_umitools.bam", sample=SAMPLES),
        #expand(config['resultsdir'] + "/results/9_methyl_ctrl/pUC19/{sample}/{sample}_CpGRetentionByReadPos.txt", sample=SAMPLES),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + ".html"),
-       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_CEREBIS.html")
+       expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + ".html")
+       #expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_CEREBIS.html")
        #expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_lambda.html"),
        #expand(config['resultsdir'] + "/results/10_multiqc/multiqc_report_" + config["project_run_name"] + "_pUC19.html")

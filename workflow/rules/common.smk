@@ -1,6 +1,5 @@
 __author__ = "Nicholas Kueng"
 __copyright__ = "Copyright 2023, Nicholas Kueng"
-#__email__ = ""
 __license__ = "MIT"
 
 

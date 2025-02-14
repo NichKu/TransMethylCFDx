@@ -24,6 +24,8 @@ rule index_rxbam:
                 temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt.rx.bam.bai")
         log:
                 config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.index_rxbam.log"
+        conda:
+                "../envs/twist_target.yaml"
         threads: index_threads
         shell:
                 """
@@ -45,7 +47,7 @@ rule group_umi_umitools:
                 log_sort = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.sort.log",
                 log_sort_coord = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.sort.log"
         params:
-                min_map_q=0,
+                min_map_q=30,
                 random_seed=42
         conda:
                 "../envs/twist_target.yaml"
@@ -63,7 +65,6 @@ rule group_umi_umitools:
                         --umi-tag=RX \
                         --method=directional \
                         --paired \
-                        --unmapped-reads=use \
                         --mapping-quality={params.min_map_q} \
                         --random-seed={params.random_seed}
 
@@ -88,6 +89,8 @@ rule index_umi_bam:
                 temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_sort_coord.umi.bam.bai")
         log:
                 config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.index_umibam.log"
+        conda:
+                "../envs/twist_target.yaml"
         threads: index_threads
         shell:
                 """
@@ -222,7 +225,7 @@ rule align_consensus_reads:
                 R1_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R1.fastq.gz",
                 R2_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.R2.fastq.gz"      
         output:
-                bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.bam"
+                bam_cons = temp(config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.bam")
         log:
                 align_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons_bwameth.log",
                 samb_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons_toBam_sambamba.log"
@@ -242,7 +245,7 @@ rule align_consensus_reads:
                         -h \
                         -t {threads} \
                         --sam-input \
-                        --filter 'not secondary_alignment and not failed_quality_control and not supplementary and proper_pair and mapping_quality > 30' \
+                        --filter 'not secondary_alignment and not failed_quality_control and not supplementary and proper_pair and mapping_quality >= 55' \
                         -f bam \
                         -l 1 \
                         -o {output.bam_cons} \
@@ -254,9 +257,11 @@ rule sort_cons:
     input:
         bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.bam"
     output:
-        bam_cons_sort = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
+        bam_cons_sort = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
+        bam_cons_sort_bai = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam.bai"
     log:
-        sort_cons_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons.sort.sambamba.log"
+        sort_cons_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons.sort.sambamba.log",
+        index_sort_cons_log = config['resultsdir'] + "/logs/5_dedup_consensus/{sample}.cons.sort.index.log"
     params:
         temp_dir = config['resultsdir'] + "/results/tmp/"
     conda:
@@ -271,5 +276,10 @@ rule sort_cons:
             -l 1 \
             {input.bam_cons} \
         2> {log.sort_cons_log}
+        
+        samtools index \
+            -@ {threads} \
+            {output.bam_cons_sort} \
+        2> {log.index_sort_cons_log}
         """
-
+        

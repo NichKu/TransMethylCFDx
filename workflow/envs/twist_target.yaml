@@ -10,7 +10,7 @@ dependencies:
   - samtools
   - preseq
   - qualimap
-  - biscuit
+  - biscuit=1.2.0
   - bedtools
   - parallel
   - fgbio
@@ -20,8 +20,8 @@ dependencies:
   - cython
   - pyfasta
   - statsmodels
+  - scikit-learn
+  - multiqc
   - pip
   - pip:
     - srslyumi
-    - msgpack==0.5.6
-    - git+https://github.com/ewels/MultiQC.git

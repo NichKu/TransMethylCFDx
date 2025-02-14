@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Nicholas Kueng Jan 2023
+# Nicholas Kueng Feb 2025
 
 
 """
@@ -11,6 +11,10 @@
 # reads input (mpileup output) from sys.stdin
 # modified from https://github.com/noushin6/NGSTools/blob/master/baseParser.py
 # such that it doesn't count the allele when there is an insertion or deletion
+# 
+# INSTRUCTION:
+# directionly pipe the output of samtools mpileup to this script
+# samtools mpileup -l TARGET_BED --fasta-ref REFERENCE -o /dev/stdout INPUT_BAM | python3 /PATH/TO/SCRIPT/parse_pileup_file.py | tee OUTPUTNAME.pileup 
 ###############################################################################
 """
 

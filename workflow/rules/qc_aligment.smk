@@ -1,12 +1,15 @@
 rule qc_alignment_dup:
     input:
         bam_unfilt_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam",
-        bam_filt =  config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam"
+        bam_filt =  config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam",
+        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
     output:
         samtools_flagstat = config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}.bam.flagstat",
+        samtools_flagstat_cons = config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}_cons.bam.flagstat",
         preseq_estimate = config['resultsdir'] + "/results/6_aligment_QC/preseq/{sample}.lc_extrap.txt"
     log:
         samtools_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.samtools.log",
+        samtools_cons_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}_cons.samtools.log",
         preseq_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.preseq.log"
     conda:
         "../envs/twist_target.yaml"
@@ -14,12 +17,13 @@ rule qc_alignment_dup:
     shell:
         """
         samtools stats -@ {threads} {input.bam_unfilt_sort} 1> {output.samtools_flagstat} 2> {log.samtools_log}
+        samtools stats -@ {threads} {input.bam_cons} 1> {output.samtools_flagstat_cons} 2> {log.samtools_cons_log}
         preseq lc_extrap -B -P -o {output.preseq_estimate} {input.bam_filt} 2> {log.preseq_log}
         """
 
 rule qc_alignment_dedup:
     input:
-        bam_dedup = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam",
+        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
         all_targets_intervallist = output_file_all_target_interval_list,
         meth_targets_intervallist = output_file_meth_target_interval_list,
         snp_targets_intervallist = output_file_snp_target_interval_list,
@@ -44,25 +48,26 @@ rule qc_alignment_dedup:
         gcbias_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.gcbias.log"
     params:
         panel_region = config['targetregions_all'],
-        ref = config["reference_w_ctrl"],
+        #ref_wCEREB = config["reference_w_ctrl"],
+        ref_woCEREB = config["reference_wo_ctrl"],
         tmp_dir=config['tmp-dir']
     conda:
         "../envs/twist_target.yaml"
     shell:
         """
         picard CollectHsMetrics \
-            --INPUT {input.bam_dedup} \
+            --INPUT {input.bam_cons} \
             --OUTPUT {output.all_hs_metrics} \
-            --REFERENCE_SEQUENCE {params.ref} \
+            --REFERENCE_SEQUENCE {params.ref_woCEREB} \
             --TARGET_INTERVALS {input.all_targets_intervallist} \
             --BAIT_INTERVALS {input.all_bait_intervallist} \
             --COVERAGE_CAP 10000 \
         2> {log.all_hsmetrics_log}
 
         picard CollectHsMetrics \
-            --INPUT {input.bam_dedup} \
+            --INPUT {input.bam_cons} \
             --OUTPUT {output.meth_hs_metrics} \
-            --REFERENCE_SEQUENCE {params.ref} \
+            --REFERENCE_SEQUENCE {params.ref_woCEREB} \
             --TARGET_INTERVALS {input.meth_targets_intervallist} \
             --BAIT_INTERVALS {input.meth_bait_intervallist} \
             --PER_TARGET_COVERAGE {output.meth_per_targ_cov} \
@@ -70,9 +75,9 @@ rule qc_alignment_dedup:
         2> {log.meth_hsmetrics_log}
 
         picard CollectHsMetrics \
-            --INPUT {input.bam_dedup} \
+            --INPUT {input.bam_cons} \
             --OUTPUT {output.snp_hs_metrics} \
-            --REFERENCE_SEQUENCE {params.ref} \
+            --REFERENCE_SEQUENCE {params.ref_woCEREB} \
             --TARGET_INTERVALS {input.snp_targets_intervallist} \
             --BAIT_INTERVALS {input.snp_bait_intervallist} \
             --PER_TARGET_COVERAGE {output.snp_per_targ_cov} \
@@ -80,25 +85,25 @@ rule qc_alignment_dedup:
         2> {log.snp_hsmetrics_log}
         
         picard CollectGcBiasMetrics \
-            --INPUT {input.bam_dedup} \
+            --INPUT {input.bam_cons} \
             --OUTPUT {output.gcbias_output} \
             --CHART_OUTPUT {output.gcbias_graph} \
             --SUMMARY_OUTPUT {output.gcbias_summary} \
-            --REFERENCE_SEQUENCE {params.ref} \
+            --REFERENCE_SEQUENCE {params.ref_woCEREB} \
             --IS_BISULFITE_SEQUENCED true \
             --TMP_DIR {params.tmp_dir} \
         2> {log.gcbias_log}
 
         samtools idxstats \
             -@ {threads} \
-            {input.bam_dedup} \
+            {input.bam_cons} \
         1> {output.idxstats} \
         2> {log.idxstats_log}
         """
 
 rule qc_alignment_qualimap:
     input:
-        bam_dedup = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam"
+        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
     output:
         qualimap_report = config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf"
     log:
@@ -119,7 +124,7 @@ rule qc_alignment_qualimap:
             -nt {threads} \
             -os \
             -sdmode 1 \
-            -bam {input.bam_dedup} \
+            -bam {input.bam_cons} \
             -outdir {params.qualimap_outdir} \
             -outfile {wildcards.sample}.qualimapReport.pdf\
         2> {log.qualimap_log}
@@ -127,7 +132,7 @@ rule qc_alignment_qualimap:
 
 rule qc_methylation:
     input:
-        bam_dedup = config['resultsdir'] + "/results/5_dedup_consensus/{sample}_filt_dedup_umitools.bam"
+        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
     output:
         config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_totalReadConversionRate.txt",
         config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpHRetentionByReadPos.txt",
@@ -149,12 +154,12 @@ rule qc_methylation:
             {params.assets} \
             {params.reference} \
             {wildcards.sample} \
-            {input.bam_dedup} \
+            {input.bam_cons} \
         2> {log.qc_sh}
 
         biscuit bsstrand \
             {params.reference} \
-            {input.bam_dedup} \
+            {input.bam_cons} \
         1> {output.bsstrand}
         2> {log.biscuit_log}
         """

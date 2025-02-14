@@ -1,6 +1,6 @@
-rule create_seq_dict:
+rule create_seq_dict_wo:
     input:
-        ref = config["reference_w_ctrl"]
+        ref = config["reference_wo_ctrl"]
     output:
         seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
     log:

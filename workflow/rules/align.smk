@@ -3,7 +3,7 @@ rule align:
         reads_1_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R1_val_1.fq.gz",
         reads_2_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R2_val_2.fq.gz"
     output:
-        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam"
+        bam_w_ctrls = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam")
     log:
         align_log = config['resultsdir'] + "/logs/4_alignment/{sample}.bwameth.log",
         samb_log = config['resultsdir'] + "/logs/4_alignment/{sample}.toBam_sambamba.log"
@@ -77,7 +77,7 @@ rule remove_CEREBIS:
         bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
         bam_w_ctrls_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
     output:
-        bam = config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
+        bam = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam")
     log:
         log_remove = config['resultsdir'] + "/logs/4_alignment/{sample}.removeCEREBIS.log"
     conda:
@@ -97,7 +97,7 @@ rule sort_unfilt_woCEREBIS:
     input:
         bam_unfilt = config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
     output:
-        bam_unfilt_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam"
+        bam_unfilt_sort = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam")
     log:
         sort_unfilt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_unfilt_sambamba.log"
     params:
@@ -135,7 +135,7 @@ rule filter_bam_woCEREBIS:
         sambamba view \
             -h \
             -t {threads} \
-            --filter 'not secondary_alignment and not failed_quality_control and not supplementary and proper_pair and mapping_quality > 0' \
+            --filter 'not secondary_alignment and not failed_quality_control and not supplementary and proper_pair and mapping_quality > 30' \
             -f bam \
             -l 1 \
             -o /dev/stdout \

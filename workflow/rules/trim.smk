@@ -9,6 +9,8 @@ rule trim_adapter:
         trim_log = config['resultsdir'] + "/logs/2_trimmed/{sample}.trim.log"
     params:
         output_dir = config['resultsdir'] + "/results/2_trimmed/"
+        #trim_galore_clip_r1 = config['trim_galore_clip_r1'],
+        #trim_galore_clip_r2 = config['trim_galore_clip_r2']
     conda:
         "../envs/twist_target.yaml"
     threads: trim_threads
@@ -22,3 +24,5 @@ rule trim_adapter:
             --paired {input.reads_1} {input.reads_2} \
         2> {log.trim_log}
         """
+#--clip_R1 {params.trim_galore_clip_r1} \
+#--clip_R2 {params.trim_galore_clip_r2} \

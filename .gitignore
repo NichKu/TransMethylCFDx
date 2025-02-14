@@ -1,0 +1,7 @@
+.DS_Store
+comments
+Snakemake_tips
+workflow/envs/demultiplex.yaml
+workflow/scripts/pileup2baseindel.pl
+workflow/scripts/bamtag.py
+config/config.yaml
