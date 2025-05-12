@@ -1,4 +1,4 @@
-# TransMethylCFDx - A pipeline for targeted methylation and genotype-based tissue of origin determination of cfDNA from transplant patients
+# TransMethylCFDx - A pipeline for targeted methylation and genotype-based tissue-of-origin determination of cfDNA from transplant patients.
 
 ## Overview
 
@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**TransMethylCFDx** is a pipeline for the analysis of targeted methylation sequencing data specifically designed to pre-process data for the deconvolution of cell-free DNA to determine the tissue of origin (TOO) but also perform simultanous calculation of the fraction of donor-derived cfDNA.
+**TransMethylCFDx** is a pipeline for targeted methylation sequencing data analysis that deconvolutes cfDNA tissue-of-origin and simultaneously quantifies donor-derived cfDNA.
 
 ## Pipeline Summary
 
@@ -53,13 +53,10 @@ To launch the analysis, run the following command:
 snakemake --cores [n] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
 ```
 
-For detailed explanation of the Snakemake arguments please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#). This guide also goes into details when the pipeline should be run a an HPC cluster.
+For detailed explanation of the Snakemake arguments please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#).
 
 > **Note**
 > To test whether the pipeline would run, the argument --dry-run can be added preventing from acutally running the pipeline.
-
-
-add keyword: snakemake and workflow --> https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html
 
 ## Usage Guide
 
