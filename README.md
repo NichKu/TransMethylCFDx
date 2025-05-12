@@ -28,7 +28,7 @@
 
 ## Requirements
 
-The these following dependencies need to be available:
+The following dependencies need to be available:
 - Conda >= 4.10
 - Snakemake >= 7.17
 
