@@ -71,8 +71,6 @@ To set up and launch the pipline, the steps listed below should be followed:
 The number of cores being allocated to each job is configured in the Snakemake file under # Threads. The pipline is recommended to be launched with at least 10 CPUs. The pipline has been tested using 4GB RAM per CPU.
 
 
-
-
 ## Output Folder Structure
 
 Below is the structure of the output folder:
@@ -118,3 +116,8 @@ path/to/resultsfolder/name/
     ├── 9_methyl_ctrl
     └── 10_multiqc
 ```
+
+## Cite
+If you use this pipeline please cite: 
+Kueng, N., Sandberg, F., Sidler, D., Banz, V., Berzigotti, A., Ng, C. K. Y., Largiader, C. R., & Amstutz, U. (2025). Integrated targeted deep sequencing reveals unique tissue-of-origin and donor-derived cell-free DNA signatures in organ transplant recipients. MedRxiv, 2025.04.29.25326125. doi:10.1101/2025.04.29.25326125.
+
