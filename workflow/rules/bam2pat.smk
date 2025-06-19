@@ -1,13 +1,14 @@
 rule bam2pat:
     input:
-        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
+        bam_cons=config["resultsdir"]
+        + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
     output:
-        pat_cons = config['resultsdir'] + "/results/9_pat_files/{sample}.cons.sort.pat.gz"
+        pat_cons=config["resultsdir"] + "/results/9_pat_files/{sample}.cons.sort.pat.gz",
     params:
-        temp_dir = config['resultsdir'] + "/results/tmp/",
-        output_dir = config['resultsdir'] + "/results/"
+        temp_dir=config["resultsdir"] + "/results/tmp/",
+        output_dir=config["resultsdir"] + "/results/",
     log:
-        bam2pat_log = config['resultsdir'] + "/logs/9_pat_files/"
+        bam2pat_log=config["resultsdir"] + "/logs/9_pat_files/",
     conda:
         "../envs/twist_target.yaml"
     threads: bam2pat_threads

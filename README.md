@@ -70,6 +70,21 @@ To set up and launch the pipline, the steps listed below should be followed:
 #### Resources
 The number of cores being allocated to each job is configured in the Snakemake file under # Threads. The pipline is recommended to be launched with at least 10 CPUs. The pipline has been tested using 4GB RAM per CPU.
 
+## dd-cfDNA Calculation
+A script is provided in ./scripts to calculate the dd-cfDNA using the pileup files generated and saved to the 8_dd-cfDNA directory.
+
+Dependencies:
+- Python 3.10 or higher
+- pandas
+- matplotlib
+- scikit-learn
+
+Usage:
+Run the script with the required arguments as following:
+
+    python dd-cfDNA_calculation.py -dir <input_directory> -o <output_file>
+
+    -h or --help for more information on available optional flags.
 
 ## Output Folder Structure
 

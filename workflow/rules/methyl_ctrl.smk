@@ -9,11 +9,12 @@ rule extract_cerebis_bam:
     output:
         bam_CEREBIS = config['resultsdir'] + "/results/9_methyl_ctrl/CEREBIS/{sample}_CEREBIS.bam"
     log:
+        bam_CEREBIS_log = config['resultsdir'] + "/logs/9_methyl_ctrl/CEREBIS/{sample}.extract_CEREBIS.log"
     conda:
         "../envs/twist_target.yaml"
     shell:
         """
-        samtools view -b -h -o {output.bam_CEREBIS} {input.bam_w_ctrls} CEREBIS
+        samtools view -b -h -o {output.bam_CEREBIS} {input.bam_w_ctrls} CEREBIS 2> {log.bam_CEREBIS_log}
         """
 
 """

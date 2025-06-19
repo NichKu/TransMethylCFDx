@@ -1,16 +1,23 @@
 rule qc_alignment_dup:
     input:
-        bam_unfilt_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam",
-        bam_filt =  config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam",
-        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
+        bam_unfilt_sort=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam",
+        bam_filt=config["resultsdir"]
+        + "/results/4_alignment/bam_filt/{sample}_filt.bam",
+        bam_cons=config["resultsdir"]
+        + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
     output:
-        samtools_flagstat = config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}.bam.flagstat",
-        samtools_flagstat_cons = config['resultsdir'] + "/results/6_aligment_QC/flagstat/{sample}_cons.bam.flagstat",
-        preseq_estimate = config['resultsdir'] + "/results/6_aligment_QC/preseq/{sample}.lc_extrap.txt"
+        samtools_flagstat=config["resultsdir"]
+        + "/results/6_aligment_QC/flagstat/{sample}.bam.flagstat",
+        samtools_flagstat_cons=config["resultsdir"]
+        + "/results/6_aligment_QC/flagstat/{sample}_cons.bam.flagstat",
+        preseq_estimate=config["resultsdir"]
+        + "/results/6_aligment_QC/preseq/{sample}.lc_extrap.txt",
     log:
-        samtools_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.samtools.log",
-        samtools_cons_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}_cons.samtools.log",
-        preseq_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.preseq.log"
+        samtools_log=config["resultsdir"] + "/logs/6_aligment_QC/{sample}.samtools.log",
+        samtools_cons_log=config["resultsdir"]
+        + "/logs/6_aligment_QC/{sample}_cons.samtools.log",
+        preseq_log=config["resultsdir"] + "/logs/6_aligment_QC/{sample}.preseq.log",
     conda:
         "../envs/twist_target.yaml"
     threads: qc_align_threads
@@ -21,36 +28,50 @@ rule qc_alignment_dup:
         preseq lc_extrap -B -P -o {output.preseq_estimate} {input.bam_filt} 2> {log.preseq_log}
         """
 
+
 rule qc_alignment_dedup:
     input:
-        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
-        all_targets_intervallist = output_file_all_target_interval_list,
-        meth_targets_intervallist = output_file_meth_target_interval_list,
-        snp_targets_intervallist = output_file_snp_target_interval_list,
-        all_bait_intervallist = output_file_all_bait_interval_list,
-        meth_bait_intervallist = output_file_meth_bait_interval_list,
-        snp_bait_intervallist = output_file_snp_bait_interval_list
+        bam_cons=config["resultsdir"]
+        + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
+        all_targets_intervallist=output_file_all_target_interval_list,
+        meth_targets_intervallist=output_file_meth_target_interval_list,
+        snp_targets_intervallist=output_file_snp_target_interval_list,
+        all_bait_intervallist=output_file_all_bait_interval_list,
+        meth_bait_intervallist=output_file_meth_bait_interval_list,
+        snp_bait_intervallist=output_file_snp_bait_interval_list,
     output:
-        all_hs_metrics = config['resultsdir'] + "/results/6_aligment_QC/all_metrics/{sample}.all_hs_metrics.txt",
-        meth_hs_metrics = config['resultsdir'] + "/results/6_aligment_QC/meth_metrics/{sample}.meth_hs_metrics.txt",
-        meth_per_targ_cov = config['resultsdir'] + "/results/6_aligment_QC/meth_per_target_metrics/{sample}.meth_per_target_coverage.txt",
-        snp_hs_metrics = config['resultsdir'] + "/results/6_aligment_QC/snp_metrics/{sample}.snp_hs_metrics.txt",
-        snp_per_targ_cov = config['resultsdir'] + "/results/6_aligment_QC/snp_per_target_metrics/{sample}.snp_per_target_coverage.txt",
-        gcbias_output = config['resultsdir'] + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gc_metrics.txt",
-        gcbias_summary = config['resultsdir'] + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gcbias_summary.txt",
-        gcbias_graph = config['resultsdir'] + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gcbias.pdf",
-        idxstats = config['resultsdir'] + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt"
+        all_hs_metrics=config["resultsdir"]
+        + "/results/6_aligment_QC/all_metrics/{sample}.all_hs_metrics.txt",
+        meth_hs_metrics=config["resultsdir"]
+        + "/results/6_aligment_QC/meth_metrics/{sample}.meth_hs_metrics.txt",
+        meth_per_targ_cov=config["resultsdir"]
+        + "/results/6_aligment_QC/meth_per_target_metrics/{sample}.meth_per_target_coverage.txt",
+        snp_hs_metrics=config["resultsdir"]
+        + "/results/6_aligment_QC/snp_metrics/{sample}.snp_hs_metrics.txt",
+        snp_per_targ_cov=config["resultsdir"]
+        + "/results/6_aligment_QC/snp_per_target_metrics/{sample}.snp_per_target_coverage.txt",
+        gcbias_output=config["resultsdir"]
+        + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gc_metrics.txt",
+        gcbias_summary=config["resultsdir"]
+        + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gcbias_summary.txt",
+        gcbias_graph=config["resultsdir"]
+        + "/results/6_aligment_QC/gcbias_metrics/{sample}.bam_gcbias.pdf",
+        idxstats=config["resultsdir"]
+        + "/results/6_aligment_QC/idxstats/{sample}.idxstats.txt",
     log:
-        all_hsmetrics_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.all_hsmetrics.log",
-        meth_hsmetrics_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.meth_hsmetrics.log",
-        snp_hsmetrics_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.snp_hsmetrics.log",
-        idxstats_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.idxstats.log",
-        gcbias_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.gcbias.log"
+        all_hsmetrics_log=config["resultsdir"]
+        + "/logs/6_aligment_QC/{sample}.all_hsmetrics.log",
+        meth_hsmetrics_log=config["resultsdir"]
+        + "/logs/6_aligment_QC/{sample}.meth_hsmetrics.log",
+        snp_hsmetrics_log=config["resultsdir"]
+        + "/logs/6_aligment_QC/{sample}.snp_hsmetrics.log",
+        idxstats_log=config["resultsdir"] + "/logs/6_aligment_QC/{sample}.idxstats.log",
+        gcbias_log=config["resultsdir"] + "/logs/6_aligment_QC/{sample}.gcbias.log",
     params:
-        panel_region = config['targetregions_all'],
+        panel_region=config["targetregions_all"],
         #ref_wCEREB = config["reference_w_ctrl"],
-        ref_woCEREB = config["reference_wo_ctrl"],
-        tmp_dir=config['tmp-dir']
+        ref_woCEREB=config["reference_wo_ctrl"],
+        tmp_dir=config["tmp-dir"],
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -101,20 +122,24 @@ rule qc_alignment_dedup:
         2> {log.idxstats_log}
         """
 
+
 rule qc_alignment_qualimap:
     input:
-        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
+        bam_cons=config["resultsdir"]
+        + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
     output:
-        qualimap_report = config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf"
+        qualimap_report=config["resultsdir"]
+        + "/results/6_aligment_QC/qualimap/{sample}/{sample}.qualimapReport.pdf",
     log:
-        qualimap_log = config['resultsdir'] + "/logs/6_aligment_QC/{sample}.bamqc.log"
+        qualimap_log=config["resultsdir"] + "/logs/6_aligment_QC/{sample}.bamqc.log",
     params:
-        qualimap_outdir = config['resultsdir'] + "/results/6_aligment_QC/qualimap/{sample}",
-        panel_region = config['targetregions_all']
+        qualimap_outdir=config["resultsdir"]
+        + "/results/6_aligment_QC/qualimap/{sample}",
+        panel_region=config["targetregions_all"],
     conda:
         "../envs/twist_target.yaml"
     resources:
-        mem_mb=6000
+        mem_mb=6000,
     threads: qc_align_threads
     shell:
         """
@@ -130,21 +155,28 @@ rule qc_alignment_qualimap:
         2> {log.qualimap_log}
         """
 
+
 rule qc_methylation:
     input:
-        bam_cons = config['resultsdir'] + "/results/5_dedup_consensus/{sample}.cons.sort.bam"
+        bam_cons=config["resultsdir"]
+        + "/results/5_dedup_consensus/{sample}.cons.sort.bam",
     output:
-        config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_totalReadConversionRate.txt",
-        config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpHRetentionByReadPos.txt",
-        config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt",
-        bsstrand = config['resultsdir'] + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt"
+        config["resultsdir"]
+        + "/results/7_methylQC/{sample}/{sample}_totalReadConversionRate.txt",
+        config["resultsdir"]
+        + "/results/7_methylQC/{sample}/{sample}_CpHRetentionByReadPos.txt",
+        config["resultsdir"]
+        + "/results/7_methylQC/{sample}/{sample}_CpGRetentionByReadPos.txt",
+        bsstrand=config["resultsdir"]
+        + "/results/7_methylQC/{sample}/{sample}_strand_qc.txt",
     params:
-        reference = config['reference_wo_ctrl'],
-        output_dir = config['resultsdir'] + "/results/7_methylQC/{sample}",
-        assets = config['biscuit_assets_dir']
+        reference=config["reference_wo_ctrl"],
+        output_dir=config["resultsdir"] + "/results/7_methylQC/{sample}",
+        assets=config["biscuit_assets_dir"],
     log:
-        qc_sh = config['resultsdir'] + "/logs/7_methylQC/{sample}.biscuit_qc.log",
-        biscuit_log = config['resultsdir'] + "/logs/7_methylQC/{sample}.biscuit_bsstrand.log"
+        qc_sh=config["resultsdir"] + "/logs/7_methylQC/{sample}.biscuit_qc.log",
+        biscuit_log=config["resultsdir"]
+        + "/logs/7_methylQC/{sample}.biscuit_bsstrand.log",
     conda:
         "../envs/twist_target.yaml"
     shell:

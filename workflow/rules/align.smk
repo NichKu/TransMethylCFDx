@@ -1,14 +1,18 @@
 rule align:
     input:
-        reads_1_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R1_val_1.fq.gz",
-        reads_2_trimmed = config['resultsdir'] + "/results/2_trimmed/{sample}_R2_val_2.fq.gz"
+        reads_1_trimmed=config["resultsdir"]
+        + "/results/2_trimmed/{sample}_R1_val_1.fq.gz",
+        reads_2_trimmed=config["resultsdir"]
+        + "/results/2_trimmed/{sample}_R2_val_2.fq.gz",
     output:
-        bam_w_ctrls = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam")
+        bam_w_ctrls=temp(
+            config["resultsdir"] + "/results/4_alignment/bam/{sample}_w_ctrls.bam"
+        ),
     log:
-        align_log = config['resultsdir'] + "/logs/4_alignment/{sample}.bwameth.log",
-        samb_log = config['resultsdir'] + "/logs/4_alignment/{sample}.toBam_sambamba.log"
+        align_log=config["resultsdir"] + "/logs/4_alignment/{sample}.bwameth.log",
+        samb_log=config["resultsdir"] + "/logs/4_alignment/{sample}.toBam_sambamba.log",
     params:
-        reference = config['reference_w_ctrl']
+        reference=config["reference_w_ctrl"],
     conda:
         "../envs/twist_target.yaml"
     threads: align_threads
@@ -30,15 +34,19 @@ rule align:
         2> {log.samb_log}
         """
 
+
 rule sort_bam_w_ctrls:
     input:
-        bam_w_ctrls = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls.bam"
+        bam_w_ctrls=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls.bam",
     output:
-        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam"
+        bam_w_ctrls_sort=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
     log:
-        sort_unfilt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_w_ctrls_sambamba.log"
+        sort_unfilt_log=config["resultsdir"]
+        + "/logs/4_alignment/{sample}.sort_w_ctrls_sambamba.log",
     params:
-        temp_dir = config['resultsdir'] + "/results/tmp/"
+        temp_dir=config["resultsdir"] + "/results/tmp/",
     conda:
         "../envs/twist_target.yaml"
     threads: sort_filt_threads
@@ -53,13 +61,17 @@ rule sort_bam_w_ctrls:
         2> {log.sort_unfilt_log}
         """
 
+
 rule index_bam_w_ctrls:
     input:
-        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam"
+        bam_w_ctrls_sort=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
     output:
-        bam_w_ctrls_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
+        bam_w_ctrls_sort_bai=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai",
     log:
-        log_index = config['resultsdir'] + "/logs/4_alignment/{sample}.index_bam_w_ctrls.log"
+        log_index=config["resultsdir"]
+        + "/logs/4_alignment/{sample}.index_bam_w_ctrls.log",
     conda:
         "../envs/twist_target.yaml"
     threads: index_threads
@@ -72,14 +84,19 @@ rule index_bam_w_ctrls:
         2> {log.log_index}
         """
 
+
 rule remove_CEREBIS:
     input:
-        bam_w_ctrls_sort = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
-        bam_w_ctrls_sort_bai = config['resultsdir'] + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai"
+        bam_w_ctrls_sort=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam",
+        bam_w_ctrls_sort_bai=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_w_ctrls_sorted.bam.bai",
     output:
-        bam = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam")
+        bam=temp(
+            config["resultsdir"] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
+        ),
     log:
-        log_remove = config['resultsdir'] + "/logs/4_alignment/{sample}.removeCEREBIS.log"
+        log_remove=config["resultsdir"] + "/logs/4_alignment/{sample}.removeCEREBIS.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -93,15 +110,21 @@ rule remove_CEREBIS:
         2> {log.log_remove}
         """
 
+
 rule sort_unfilt_woCEREBIS:
     input:
-        bam_unfilt = config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
+        bam_unfilt=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_woCEREBIS.bam",
     output:
-        bam_unfilt_sort = temp(config['resultsdir'] + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam")
+        bam_unfilt_sort=temp(
+            config["resultsdir"]
+            + "/results/4_alignment/bam/{sample}_unfilt_sorted.bam"
+        ),
     log:
-        sort_unfilt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_unfilt_sambamba.log"
+        sort_unfilt_log=config["resultsdir"]
+        + "/logs/4_alignment/{sample}.sort_unfilt_sambamba.log",
     params:
-        temp_dir = config['resultsdir'] + "/results/tmp/"
+        temp_dir=config["resultsdir"] + "/results/tmp/",
     conda:
         "../envs/twist_target.yaml"
     threads: sort_filt_threads
@@ -119,14 +142,18 @@ rule sort_unfilt_woCEREBIS:
 
 rule filter_bam_woCEREBIS:
     input:
-        bam_unfilt = config['resultsdir'] + "/results/4_alignment/bam/{sample}_woCEREBIS.bam"
+        bam_unfilt=config["resultsdir"]
+        + "/results/4_alignment/bam/{sample}_woCEREBIS.bam",
     output:
-        bam_filt =  config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam"
+        bam_filt=config["resultsdir"]
+        + "/results/4_alignment/bam_filt/{sample}_filt.bam",
     log:
-        filt_bam_log = config['resultsdir'] + "/logs/4_alignment/{sample}.filt_sambamba.log",
-        sort_filt_log = config['resultsdir'] + "/logs/4_alignment/{sample}.sort_filt_sambamba.log"
+        filt_bam_log=config["resultsdir"]
+        + "/logs/4_alignment/{sample}.filt_sambamba.log",
+        sort_filt_log=config["resultsdir"]
+        + "/logs/4_alignment/{sample}.sort_filt_sambamba.log",
     params:
-        temp_dir = config['resultsdir'] + "/results/tmp/"
+        temp_dir=config["resultsdir"] + "/results/tmp/",
     conda:
         "../envs/twist_target.yaml"
     threads: sort_filt_threads
@@ -150,13 +177,16 @@ rule filter_bam_woCEREBIS:
         2> {log.sort_filt_log}
         """
 
+
 rule index_filt_bam:
     input:
-        bam_sorted = config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam"
+        bam_sorted=config["resultsdir"]
+        + "/results/4_alignment/bam_filt/{sample}_filt.bam",
     output:
-        bam_sorted_bai = config['resultsdir'] + "/results/4_alignment/bam_filt/{sample}_filt.bam.bai"
+        bam_sorted_bai=config["resultsdir"]
+        + "/results/4_alignment/bam_filt/{sample}_filt.bam.bai",
     log:
-        config['resultsdir'] + "/logs/4_alignment/{sample}.index_filt_bam.log"
+        config["resultsdir"] + "/logs/4_alignment/{sample}.index_filt_bam.log",
     conda:
         "../envs/twist_target.yaml"
     threads: index_threads

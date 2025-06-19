@@ -1,10 +1,13 @@
 rule create_seq_dict_wo:
     input:
-        ref = config["reference_wo_ctrl"]
+        ref=config["reference_wo_ctrl"],
     output:
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     log:
-        seq_dict_log = config['resultsdir'] + "/logs/0_prepare_files/SeqDictCreation.log"
+        seq_dict_log=config["resultsdir"] + "/logs/0_prepare_files/SeqDictCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -15,14 +18,19 @@ rule create_seq_dict_wo:
         2> {log.seq_dict_log}
         """
 
+
 rule create_all_target_interval_list:
     input:
-        all_targets_bed = config["targetregions_all"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        all_targets_bed=config["targetregions_all"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_all_target_interval_list
+        output_file_all_target_interval_list,
     log:
-        target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/AllTargetIntervalListCreation.log"
+        target_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/AllTargetIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -34,14 +42,19 @@ rule create_all_target_interval_list:
         2> {log.target_interval_creation_log}
         """
 
+
 rule create_meth_target_interval_list:
     input:
-        meth_targets_bed = config["targetregions_meth"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        meth_targets_bed=config["targetregions_meth"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_meth_target_interval_list
+        output_file_meth_target_interval_list,
     log:
-        target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/MethTargetIntervalListCreation.log"
+        target_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/MethTargetIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -53,14 +66,19 @@ rule create_meth_target_interval_list:
         2> {log.target_interval_creation_log}
         """
 
+
 rule create_snp_target_interval_list:
     input:
-        snp_targets_bed = config["targetregions_snp"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        snp_targets_bed=config["targetregions_snp"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_snp_target_interval_list
+        output_file_snp_target_interval_list,
     log:
-        target_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/SNPTargetIntervalListCreation.log"
+        target_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/SNPTargetIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -72,14 +90,19 @@ rule create_snp_target_interval_list:
         2> {log.target_interval_creation_log}
         """
 
+
 rule create_all_bait_interval_list:
     input:
-        all_bait_bed = config["bait_regions_all"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        all_bait_bed=config["bait_regions_all"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_all_bait_interval_list
+        output_file_all_bait_interval_list,
     log:
-        bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/AllBaitIntervalListCreation.log"
+        bait_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/AllBaitIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -91,14 +114,19 @@ rule create_all_bait_interval_list:
         2> {log.bait_interval_creation_log}
         """
 
+
 rule create_meth_bait_interval_list:
     input:
-        meth_bait_bed = config["bait_regions_meth"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        meth_bait_bed=config["bait_regions_meth"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_meth_bait_interval_list
+        output_file_meth_bait_interval_list,
     log:
-        bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/MethBaitIntervalListCreation.log"
+        bait_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/MethBaitIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
@@ -110,14 +138,19 @@ rule create_meth_bait_interval_list:
         2> {log.bait_interval_creation_log}
         """
 
+
 rule create_snp_bait_interval_list:
     input:
-        snp_bait_bed = config["bait_regions_snp"],
-        seq_dict = config["sequence_dictionary_output_dir"] + "/" + config["genome_version"] + ".dict"
+        snp_bait_bed=config["bait_regions_snp"],
+        seq_dict=config["sequence_dictionary_output_dir"]
+        + "/"
+        + config["genome_version"]
+        + ".dict",
     output:
-        output_file_snp_bait_interval_list
+        output_file_snp_bait_interval_list,
     log:
-        bait_interval_creation_log = config['resultsdir'] + "/logs/0_prepare_files/SNPBaitIntervalListCreation.log"
+        bait_interval_creation_log=config["resultsdir"]
+        + "/logs/0_prepare_files/SNPBaitIntervalListCreation.log",
     conda:
         "../envs/twist_target.yaml"
     shell:
