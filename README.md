@@ -79,7 +79,7 @@ Dependencies:
 - matplotlib
 - scikit-learn
 
-Usage:
+#### Usage
 Run the script with the required arguments as following:
 
     python dd-cfDNA_calculation.py -dir <input_directory> -o <output_file>
