@@ -1,4 +1,5 @@
 .DS_Store
+.gitignore
 comments
 Snakemake_tips
 protocol
