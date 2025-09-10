@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**TransMethylCFDx** is a pipeline for targeted methylation sequencing data analysis that deconvolutes cfDNA tissue-of-origin and simultaneously quantifies donor-derived cfDNA.
+**TransMethylCFDx** is a pipeline for targeted methylation sequencing data analysis and subsequent cfDNA tissue-of-origin determination and donor-derived cfDNA quantification.
 
 ## Pipeline Summary
 
@@ -22,7 +22,7 @@
 4. Alignment ([`bwa-meth`](https://github.com/brentp/bwa-meth))
 5. Deduplication ([`UMI-tools`](https://umi-tools.readthedocs.io/en/latest/index.html))/ Consensus Sequence Creation ([`fgbio`](http://fulcrumgenomics.github.io/fgbio/))
 6. Alignment and Methylation QC (various)
-7. Pileup and dd-cfDNA calculation ([`samtools`](https://www.htslib.org))
+7. Pileup Generation ([`samtools`](https://www.htslib.org))
 8. Report Generation ([`MultiQC`](https://multiqc.info))
 
 
@@ -42,7 +42,6 @@ Clone the Github Repo:
 
 ```
 git clone https://github.com/NichKu/TransMethylCFDx.git
-cd TransMethylCFDx/workflow
 ```
 
 ## Quick Start
@@ -50,7 +49,8 @@ cd TransMethylCFDx/workflow
 To launch the analysis, run the following command:
 
 ```
-snakemake --cores [n] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
+cd TransMethylCFDx/workflow
+snakemake --cores <n> --use-conda -s ./Snakemake --conda-frontend conda
 ```
 
 For a detailed explanation of the Snakemake arguments, please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#).
@@ -62,20 +62,44 @@ For a detailed explanation of the Snakemake arguments, please refer to the [User
 
 To set up and launch the pipeline, follow the steps below:
 
-1. Clone the github repository
-2. Install the dependencies outlined in [Requirements](#requirements)
-3. Go to config/ and configure the config.yaml file
-4. cd ../workflow
-5. snakemake --cores [n] --use-conda --conda-frontend conda
+First, clone the github repository
+Second, install the dependencies outlined in [Requirements](#requirements)
+Third, go to config/ and configure the config.yaml file
+```
+cd ../workflow
+snakemake --cores <n> --use-conda -s ./Snakemake --conda-frontend conda 
+```
 
 #### Resources
-The number of cores allocated to each job is configured in the Snakemake file under the Threads setting. We recommend launching the pipeline with at least 10 CPUs. The pipeline has been tested with 4 GB of RAM per CPU.
+The number of cores allocated to each job is configured in the Snakemake file under the Threads setting.\
+We recommend launching the pipeline with at least 10 CPUs. The pipeline has been tested with 4 GB of RAM per CPU.
 
-## dd-cfDNA Calculation
-A script in ./scripts calculates dd-cfDNA from the pileup files saved to the 8_dd-cfDNA directory.
+## Downstream Analysis
+### Tissue-of-Origin Deconvolution
+To determine the tissue-of-origin, please use BAM files from 5_dedup_consensus and create PAT (.pat.gz) files using [`wgbstools`](https://github.com/nloyfer/wgbs_tools). The PAT files are then used with the reference atlas to perform the deconvolution using the [`UXM`](https://github.com/nloyfer/UXM_deconv) tool. The UXM tool also requires wgbstools.
 
-## Tissue-of-Origin
-To determine the tissue-of-origin, please use BAM files from 5_dedup_consensus and create pat.gz files using the ([`wgbstools`](https://github.com/nloyfer/wgbs_tools))
+The twist_TOO environment that was created to run the Snakemake workflow should be used for the wgbstools and UXM tool.
+
+To perform the deconvolution starting from the BAM files:
+
+First, activate the conda environment **twist_TOO**
+```
+export PATH=${PATH}:</path/to>/UXM_deconv:</path/to>/wgbs_tools
+
+wgbstools init_genome hg19
+
+# convert BAM to PAT files
+wgbstools bam2pat -@ <n> --lbeta -o </path/to/resultsfolder>/results/pat_files -T <tmp_directory> </path/to/resultsfolder>/results/5_dedup_consensus/*cons.sort.bam
+
+# perform deconvolution with the atlas and generate PAT files
+uxm deconv --threads <n> --rlen 4 --atlas TransMethylCFDx/resources/Atlas.Submission3_1_final_full.l4.hg19.tsv -o <OUTPUT_NAME.csv> </path/to/resultsfolder>/results/pat_files/*pat.gz
+```
+
+> **Note**
+The --rlen flag sets the number of CpGs that need to be on a single read for the read to be used for the deconvolution. --rlen 4 show the best LOD during validation.
+
+### dd-cfDNA Calculation
+The dd-cfDNA_calculation.py script in /scripts calculates dd-cfDNA from the pileup files saved to the 8_dd-cfDNA directory.
 
 #### Dependencies
 - Python 3.10 or higher
@@ -83,19 +107,21 @@ To determine the tissue-of-origin, please use BAM files from 5_dedup_consensus a
 - matplotlib
 - scikit-learn
 
+The dependencies are all available in the twist_TOO environment that was created to run the Snakemake pipeline.
+
 #### Usage
 Run the script with the required arguments as follows:
 ```
 python dd-cfDNA_calculation.py -dir <input_directory> -o <output_file>
 ```
-Use -h or --help for more information on optional flags.
+Use -h or --help for more information on more options.
 
 ## Output Folder Structure
 
 Below is the structure of the output folder:
 
 ``` 
-path/to/resultsfolder/name/
+path/to/resultsfolder/
 │  
 ├── results/
 │   ├── 1_fastqc_init
@@ -137,6 +163,6 @@ path/to/resultsfolder/name/
 ```
 
 ## Cite
-If you use this pipeline, please cite:
-Kueng, N., Sandberg, F., Sidler, D., Banz, V., Berzigotti, A., Ng, C. K. Y., Largiader, C. R., & Amstutz, U. (2025). Integrated targeted deep sequencing reveals unique tissue-of-origin and donor-derived cell-free DNA signatures in organ transplant recipients. MedRxiv, 2025.04.29.25326125. doi:10.1101/2025.04.29.25326125.
+If you use this pipeline, please cite: \
+***Kueng, N., Sandberg, F., Sidler, D., Banz, V., Berzigotti, A., Ng, C. K. Y., Largiader, C. R., & Amstutz, U. (2025). Integrated targeted deep sequencing reveals unique tissue-of-origin and donor-derived cell-free DNA signatures in organ transplant recipients. MedRxiv, 2025.04.29.25326125. doi:10.1101/2025.04.29.25326125.***
 
