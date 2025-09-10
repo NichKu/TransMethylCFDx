@@ -24,7 +24,7 @@ Run the script with the required arguments. For example:
 
     python dd-cfDNA_calculation.py -dir <input_directory> -o <output_file> -c <min_coverage>
 
-    -h or --help for more information on available options.
+Use -h or --help for more information on available options.
 
 
 Author: Nicholas Kueng
