@@ -16,12 +16,12 @@
 
 ## Pipeline Summary
 
-1. Inital fastq QC ([`FASTQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Adpater/Quality trimming ([`Trim Galore`](https://github.com/FelixKrueger/TrimGalore))
+1. Initial fastq QC ([`FASTQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+2. Adapter/Quality trimming ([`Trim Galore`](https://github.com/FelixKrueger/TrimGalore))
 3. Post-trimming QC ([`FASTQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 4. Alignment ([`bwa-meth`](https://github.com/brentp/bwa-meth))
 5. Deduplication ([`UMI-tools`](https://umi-tools.readthedocs.io/en/latest/index.html))/ Consensus Sequence Creation ([`fgbio`](http://fulcrumgenomics.github.io/fgbio/))
-6. Alignment and Methlyation QC (various)
+6. Alignment and Methylation QC (various)
 7. Pileup and dd-cfDNA calculation ([`samtools`](https://www.htslib.org))
 8. Report Generation ([`MultiQC`](https://multiqc.info))
 
@@ -33,7 +33,7 @@ The following dependencies need to be available:
 - Snakemake >= 7.17
 
 > **Note**
-> For the pipeline to run, a conda environment will be created with all necessary dependencies and will be done automatically.
+> A conda environment with all necessary dependencies will be created automatically.
 These above requirements are only needed to launch the pipeline.
 
 ## Download
@@ -41,7 +41,7 @@ These above requirements are only needed to launch the pipeline.
 Clone the Github Repo:
 
 ```
-https://github.com/NichKu/TransMethylCFDx.git
+git clone https://github.com/NichKu/TransMethylCFDx.git
 cd TransMethylCFDx/workflow
 ```
 
@@ -53,25 +53,29 @@ To launch the analysis, run the following command:
 snakemake --cores [n] -s [path/to/SnakemakeFile] --use-conda --conda-frontend conda
 ```
 
-For detailed explanation of the Snakemake arguments please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#).
+For a detailed explanation of the Snakemake arguments, please refer to the [User Guide](https://snakemake.readthedocs.io/en/stable/#).
 
 > **Note**
-> To test whether the pipeline would run, the argument --dry-run can be added preventing from acutally running the pipeline.
+> To test whether the pipeline will run, add the --dry-run argument to prevent it from actually running.
 
 ## Usage Guide
 
-To set up and launch the pipline, the steps listed below should be followed:
+To set up and launch the pipeline, follow the steps below:
 
-1. Clone the github repo
+1. Clone the github repository
 2. Install the dependencies outlined in [Requirements](#requirements)
-3. Go to /Config and configure the config.yaml file
-4. cd 
+3. Go to config/ and configure the config.yaml file
+4. cd ../workflow
+5. snakemake --cores [n] --use-conda --conda-frontend conda
 
 #### Resources
-The number of cores being allocated to each job is configured in the Snakemake file under # Threads. The pipline is recommended to be launched with at least 10 CPUs. The pipline has been tested using 4GB RAM per CPU.
+The number of cores allocated to each job is configured in the Snakemake file under the Threads setting. We recommend launching the pipeline with at least 10 CPUs. The pipeline has been tested with 4 GB of RAM per CPU.
 
 ## dd-cfDNA Calculation
-A script is provided in ./scripts to calculate the dd-cfDNA using the pileup files generated and saved to the 8_dd-cfDNA directory.
+A script in ./scripts calculates dd-cfDNA from the pileup files saved to the 8_dd-cfDNA directory.
+
+## Tissue-of-Origin
+To determine the tissue-of-origin, please use BAM files from 5_dedup_consensus and create pat.gz files using the ([`wgbstools`](https://github.com/nloyfer/wgbs_tools))
 
 #### Dependencies
 - Python 3.10 or higher
@@ -80,11 +84,11 @@ A script is provided in ./scripts to calculate the dd-cfDNA using the pileup fil
 - scikit-learn
 
 #### Usage
-Run the script with the required arguments as following:
+Run the script with the required arguments as follows:
 ```
 python dd-cfDNA_calculation.py -dir <input_directory> -o <output_file>
 ```
--h or --help for more information on available optional flags.
+Use -h or --help for more information on optional flags.
 
 ## Output Folder Structure
 
@@ -101,7 +105,7 @@ path/to/resultsfolder/name/
 │   │   ├── bam
 │   │   └── bam_filt
 │   ├── 5_dedup_consensus
-│   ├── 6_aligment_QC
+│   ├── 6_alignment_QC
 │   │    ├── all_metrics
 │   │    ├── flagstat
 │   │    ├── gcbias_metrics
@@ -133,6 +137,6 @@ path/to/resultsfolder/name/
 ```
 
 ## Cite
-If you use this pipeline please cite: 
+If you use this pipeline, please cite:
 Kueng, N., Sandberg, F., Sidler, D., Banz, V., Berzigotti, A., Ng, C. K. Y., Largiader, C. R., & Amstutz, U. (2025). Integrated targeted deep sequencing reveals unique tissue-of-origin and donor-derived cell-free DNA signatures in organ transplant recipients. MedRxiv, 2025.04.29.25326125. doi:10.1101/2025.04.29.25326125.
 
