@@ -88,7 +88,7 @@ export PATH=${PATH}:</path/to>/UXM_deconv:</path/to>/wgbs_tools
 wgbstools init_genome hg19
 # convert BAM to PAT files
 wgbstools bam2pat -@ <n> --lbeta -o </path/to/resultsfolder>/results/pat_files -T <tmp_directory> </path/to/resultsfolder>/results/5_dedup_consensus/*cons.sort.bam
-# perform deconvolution with the atlas and generate PAT files
+# perform deconvolution with the atlas and generated PAT files
 uxm deconv --threads <n> --rlen 4 --atlas TransMethylCFDx/resources/Atlas.Submission3_1_final_full.l4.hg19.tsv -o <OUTPUT_NAME.csv> </path/to/resultsfolder>/results/pat_files/*pat.gz
 ```
 
